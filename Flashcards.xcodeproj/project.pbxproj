@@ -11,6 +11,7 @@
 		53BC45082B4B359F00BD4710 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BC45072B4B359F00BD4710 /* ContentView.swift */; };
 		53BC450A2B4B35A000BD4710 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53BC45092B4B35A000BD4710 /* Assets.xcassets */; };
 		53BC450D2B4B35A000BD4710 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53BC450C2B4B35A000BD4710 /* Preview Assets.xcassets */; };
+		53FF07E22B4C18CC005CB29C /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FF07E12B4C18CC005CB29C /* Models.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +20,8 @@
 		53BC45072B4B359F00BD4710 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		53BC45092B4B35A000BD4710 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		53BC450C2B4B35A000BD4710 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		53FF07E12B4C18CC005CB29C /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		53FF07E32B4C25F0005CB29C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,8 +54,10 @@
 		53BC45042B4B359F00BD4710 /* Flashcards */ = {
 			isa = PBXGroup;
 			children = (
+				53FF07E32B4C25F0005CB29C /* Info.plist */,
 				53BC45052B4B359F00BD4710 /* FlashcardsApp.swift */,
 				53BC45072B4B359F00BD4710 /* ContentView.swift */,
+				53FF07E12B4C18CC005CB29C /* Models.swift */,
 				53BC45092B4B35A000BD4710 /* Assets.xcassets */,
 				53BC450B2B4B35A000BD4710 /* Preview Content */,
 			);
@@ -137,6 +142,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53FF07E22B4C18CC005CB29C /* Models.swift in Sources */,
 				53BC45082B4B359F00BD4710 /* ContentView.swift in Sources */,
 				53BC45062B4B359F00BD4710 /* FlashcardsApp.swift in Sources */,
 			);
@@ -275,6 +281,7 @@
 				DEVELOPMENT_TEAM = 25D86TPBWG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Flashcards/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -285,7 +292,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.codethen.Flashcards;
+				PRODUCT_BUNDLE_IDENTIFIER = com.codethen.flashcards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -304,6 +311,7 @@
 				DEVELOPMENT_TEAM = 25D86TPBWG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Flashcards/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -314,7 +322,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.codethen.Flashcards;
+				PRODUCT_BUNDLE_IDENTIFIER = com.codethen.flashcards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
