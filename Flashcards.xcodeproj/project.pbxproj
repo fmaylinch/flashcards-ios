@@ -20,6 +20,7 @@
 		53BC45072B4B359F00BD4710 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		53BC45092B4B35A000BD4710 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		53BC450C2B4B35A000BD4710 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		53CE2BBA2B4C3B8D001536B6 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		53FF07E12B4C18CC005CB29C /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		53FF07E32B4C25F0005CB29C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -60,6 +61,7 @@
 				53FF07E12B4C18CC005CB29C /* Models.swift */,
 				53BC45092B4B35A000BD4710 /* Assets.xcassets */,
 				53BC450B2B4B35A000BD4710 /* Preview Content */,
+				53CE2BBA2B4C3B8D001536B6 /* README.md */,
 			);
 			path = Flashcards;
 			sourceTree = "<group>";
