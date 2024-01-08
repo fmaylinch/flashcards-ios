@@ -39,6 +39,7 @@
 		53BC44F92B4B359F00BD4710 = {
 			isa = PBXGroup;
 			children = (
+				53CE2BBA2B4C3B8D001536B6 /* README.md */,
 				53BC45042B4B359F00BD4710 /* Flashcards */,
 				53BC45032B4B359F00BD4710 /* Products */,
 			);
@@ -61,7 +62,6 @@
 				53FF07E12B4C18CC005CB29C /* Models.swift */,
 				53BC45092B4B35A000BD4710 /* Assets.xcassets */,
 				53BC450B2B4B35A000BD4710 /* Preview Content */,
-				53CE2BBA2B4C3B8D001536B6 /* README.md */,
 			);
 			path = Flashcards;
 			sourceTree = "<group>";

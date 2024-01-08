@@ -16,11 +16,11 @@ class CardsFromApi: ObservableObject {
         let url = "http://158.160.43.18:3001/cards/list"
         var request = URLRequest(url: URL(string: url)!)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        let token = "TOKEN_HERE"
+        let token = "TOKEN"
         request.addValue("Bearer: " + token, forHTTPHeaderField: "Authorization")
         let (data, _) = try await URLSession.shared.data(for: request)
         let cardsResponse = try JSONDecoder().decode(CardsResponse.self, from: data)
-        cards = cardsResponse.cards
+        cards = cardsResponse.cards.shuffled()
     }
 }
 
@@ -34,6 +34,10 @@ struct Card: Decodable, Identifiable {
     let front: String
     let back: String
     let notes: String
+    
+    var searchText: String {
+        return front.lowercased() + " " + back.lowercased() + " " + notes.lowercased()
+    }
     
     private enum CodingKeys: String, CodingKey {
         case id = "_id"
