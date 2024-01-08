@@ -12,15 +12,25 @@ class CardsFromApi: ObservableObject {
     
     @Published var cards: [Card] = []
     
-    func fetch() async throws {
+    func fetch() async {
         let url = "http://158.160.43.18:3001/cards/list"
         var request = URLRequest(url: URL(string: url)!)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         let token = "TOKEN"
         request.addValue("Bearer: " + token, forHTTPHeaderField: "Authorization")
-        let (data, _) = try await URLSession.shared.data(for: request)
-        let cardsResponse = try JSONDecoder().decode(CardsResponse.self, from: data)
-        cards = cardsResponse.cards.shuffled()
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            if let httpResponse = response as? HTTPURLResponse {
+                if httpResponse.statusCode != 200 {
+                    cards = [errorCard(text: "API response code: \(httpResponse.statusCode)")]
+                    return
+                }
+            }
+            let cardsResponse = try JSONDecoder().decode(CardsResponse.self, from: data)
+            cards = cardsResponse.cards.shuffled()
+        } catch {
+            cards = [errorCard(error: error)]
+        }
     }
 }
 
@@ -45,4 +55,18 @@ struct Card: Decodable, Identifiable {
         case back = "back"
         case notes = "notes"
     }
+}
+
+/** Dummy card to show an error message */
+func errorCard(error: Error) -> Card {
+    return errorCard(text: error.localizedDescription)
+}
+
+func errorCard(text: String) -> Card {
+    return messageCard(front: "ごめんなさい！", back: text)
+}
+
+/** Dummy card to show a message */
+func messageCard(front: String, back: String) -> Card {
+    return Card(id: "", front: front, back: back, notes: "")
 }

@@ -29,30 +29,20 @@ struct ContentView: View {
             VStack {
                 Button(modeText, action: changeMode)
                 List(filteredCards) { card in
-                    VStack {
+                    VStack(alignment: .leading, content: {
                         if mode != 3 {
-                            HStack {
-                                Text(card.front).font(.title)
-                                Spacer()
-                            }
+                            Text(card.front).font(.title)
                         }
                         if mode != 1 {
-                            HStack {
-                                Text(card.back).font(.title3)
-                                Spacer()
-                            }
+                            Text(card.back).font(.title3)
                         }
-                    }
+                    })
                 }
                 .searchable(text: $search)
                 .onChange(of: search, initial: false, filterCards)
                 .task {
-                    do {
-                        try await cardsFromApi.fetch()
-                        filterCards()
-                    } catch {
-                        print(error)
-                    }
+                    await cardsFromApi.fetch()
+                    filterCards()
                 }
             }
         }
