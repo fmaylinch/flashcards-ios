@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		532BBE1A2B532B7300C4DA73 /* AudioPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE192B532B7300C4DA73 /* AudioPlayerManager.swift */; };
+		532BBE1C2B532C5A00C4DA73 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE1B2B532C5A00C4DA73 /* Constants.swift */; };
 		53BC45062B4B359F00BD4710 /* FlashcardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BC45052B4B359F00BD4710 /* FlashcardsApp.swift */; };
 		53BC45082B4B359F00BD4710 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BC45072B4B359F00BD4710 /* ContentView.swift */; };
 		53BC450A2B4B35A000BD4710 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53BC45092B4B35A000BD4710 /* Assets.xcassets */; };
@@ -15,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		532BBE192B532B7300C4DA73 /* AudioPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerManager.swift; sourceTree = "<group>"; };
+		532BBE1B2B532C5A00C4DA73 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		53BC45022B4B359F00BD4710 /* Flashcards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Flashcards.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53BC45052B4B359F00BD4710 /* FlashcardsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardsApp.swift; sourceTree = "<group>"; };
 		53BC45072B4B359F00BD4710 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -56,11 +60,13 @@
 		53BC45042B4B359F00BD4710 /* Flashcards */ = {
 			isa = PBXGroup;
 			children = (
-				53FF07E32B4C25F0005CB29C /* Info.plist */,
-				53BC45052B4B359F00BD4710 /* FlashcardsApp.swift */,
-				53BC45072B4B359F00BD4710 /* ContentView.swift */,
-				53FF07E12B4C18CC005CB29C /* Models.swift */,
 				53BC45092B4B35A000BD4710 /* Assets.xcassets */,
+				532BBE192B532B7300C4DA73 /* AudioPlayerManager.swift */,
+				532BBE1B2B532C5A00C4DA73 /* Constants.swift */,
+				53BC45072B4B359F00BD4710 /* ContentView.swift */,
+				53BC45052B4B359F00BD4710 /* FlashcardsApp.swift */,
+				53FF07E32B4C25F0005CB29C /* Info.plist */,
+				53FF07E12B4C18CC005CB29C /* Models.swift */,
 				53BC450B2B4B35A000BD4710 /* Preview Content */,
 			);
 			path = Flashcards;
@@ -145,8 +151,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				53FF07E22B4C18CC005CB29C /* Models.swift in Sources */,
+				532BBE1A2B532B7300C4DA73 /* AudioPlayerManager.swift in Sources */,
 				53BC45082B4B359F00BD4710 /* ContentView.swift in Sources */,
 				53BC45062B4B359F00BD4710 /* FlashcardsApp.swift in Sources */,
+				532BBE1C2B532C5A00C4DA73 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

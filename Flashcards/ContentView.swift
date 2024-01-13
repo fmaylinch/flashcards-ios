@@ -37,9 +37,7 @@ struct ContentView: View {
                 }
                                 
                 List(filteredCards) { card in
-                    NavigationLink(value: card) {
-                        CardItemView(card: card, mode: mode)
-                    }
+                    CardItemView(card: card, mode: mode)
                 }
                 .searchable(text: $search)
                 .onChange(of: search, initial: false, filterCards)
@@ -83,23 +81,37 @@ struct CardItemView: View {
     var mode: Int
 
     var body: some View {
-        VStack(alignment: .leading, content: {
-            if mode != 2 {
-                Text(card.front)
-                    .font(.system(size: 28, weight: .regular))
-            }
-            if mode != 0 {
-                let color: Color = mode == 1 ? .orange.opacity(0.9) : .primary
-                Text(card.back)
-                    .font(.system(size: 22, weight: .regular))
-                    .foregroundStyle(color, .red)
-            }
-            if mode == 1 {
-                Text(card.tags.joined(separator: ", "))
-                    .font(.system(size: 20, weight: .regular))
-                    .foregroundStyle(.purple.opacity(0.5), .red)
-            }
-        })
+        NavigationLink(value: card) {
+            VStack(alignment: .leading, content: {
+                if mode != 2 {
+                    Text(card.front)
+                        .font(.system(size: 28, weight: .regular))
+                }
+                if mode != 0 {
+                    let color: Color = mode == 1 ? .orange.opacity(0.9) : .primary
+                    Text(card.back)
+                        .font(.system(size: 22, weight: .regular))
+                        .foregroundStyle(color, .red)
+                }
+                if mode == 1 {
+                    Text(card.tags.joined(separator: ", "))
+                        .font(.system(size: 20, weight: .regular))
+                        .foregroundStyle(.purple.opacity(0.5), .red)
+                }
+                if !card.files.isEmpty {
+                    Image(systemName: "play.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 30, height: 30)
+                        .padding(.vertical, 5)
+                        .foregroundColor(.cyan)
+                        .onTapGesture {
+                            let url = "\(Constants.baseUrl)/audio/\(card.files.randomElement()!)"
+                            AudioPlayerManager.shared.playSound(from: url)
+                        }
+                }
+            })
+        }
     }
 }
 
@@ -129,6 +141,22 @@ struct CardDetailView: View {
                 .foregroundStyle(.purple, .red)
         })
         .padding(20)
+        
+        HStack(spacing: 0) {
+            ForEach(card.files, id: \.self) { file in
+                Image(systemName: "play.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 30, height: 30)
+                    .padding(.horizontal, 15)
+                    .padding(.vertical, 5)
+                    .foregroundColor(.cyan)
+                    .onTapGesture {
+                        let url = "\(Constants.baseUrl)/audio/\(file)"
+                        AudioPlayerManager.shared.playSound(from: url)
+                    }
+            }
+        }
         
         Spacer()
         

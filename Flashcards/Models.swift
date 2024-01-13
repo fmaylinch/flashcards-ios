@@ -19,11 +19,14 @@ class CardsFromApi: ObservableObject {
             return
         }
         loaded = false
-        let url = "http://158.160.43.18:3001/cards/list"
+        let url = "\(Constants.baseUrl)/cards/list"
         var request = URLRequest(url: URL(string: url)!)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        let token = "TOKEN"
+        
+        // TODO: get from login
+        let token = Constants.testToken
         request.addValue("Bearer: " + token, forHTTPHeaderField: "Authorization")
+        
         do {
             print("Getting cards from \(url)")
             let (data, response) = try await URLSession.shared.data(for: request)
@@ -54,6 +57,7 @@ struct Card: Decodable, Identifiable, Hashable {
     let mainWords: [String]
     let notes: String
     let tags: [String]
+    let files: [String]
 
     var searchText: String {
         return front.lowercased() + " " + back.lowercased() + " " + notes.lowercased() + " " + tags.joined(separator: ". ") + "."
@@ -66,6 +70,7 @@ struct Card: Decodable, Identifiable, Hashable {
         case mainWords = "mainWords"
         case notes = "notes"
         case tags = "tags"
+        case files = "files"
     }
 }
 
@@ -107,6 +112,7 @@ func messageCard(front: String, back: String) -> Card {
         back: back,
         mainWords: [],
         notes: "",
-        tags: []
+        tags: [],
+        files: []
     )
 }
