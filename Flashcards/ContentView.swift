@@ -32,9 +32,8 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                CustomButton(text: modeText) {
-                    changeMode()
-                }
+                ModeButtons(mode: $mode)
+                    .padding(.horizontal, 40)
                                 
                 List(filteredCards) { card in
                     CardItemView(card: card, mode: mode)
@@ -74,6 +73,33 @@ struct ContentView: View {
     }
 }
 
+struct ModeButtons: View {
+    
+    @Binding var mode: Int
+    
+    var body: some View {
+        HStack {
+            Button {
+                mode = 0
+            } label: {
+                Text("🇯🇵").font(.system(size: 40, weight: .regular))
+            }
+            Spacer()
+            Button {
+                mode = 1
+            } label: {
+                Text("🌍").font(.system(size: 40, weight: .regular))
+            }
+            Spacer()
+            Button {
+                mode = 2
+            } label: {
+                Text("🇬🇧").font(.system(size: 40, weight: .regular))
+            }
+        }
+    }
+}
+
 
 struct CardItemView: View {
     
@@ -99,7 +125,7 @@ struct CardItemView: View {
                         .foregroundStyle(.purple.opacity(0.5), .red)
                 }
                 if !card.files.isEmpty {
-                    Image(systemName: "play.fill")
+                    Image(systemName: "speaker.wave.2")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 30, height: 30)
@@ -144,7 +170,7 @@ struct CardDetailView: View {
         
         HStack(spacing: 0) {
             ForEach(card.files, id: \.self) { file in
-                Image(systemName: "play.fill")
+                Image(systemName: "speaker.wave.2")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 30, height: 30)
@@ -176,6 +202,7 @@ struct CardDetailView: View {
 }
 
 
+// TODO: Open this view in a modal
 struct CardEditView: View {
     
     @State var id: String = ""
