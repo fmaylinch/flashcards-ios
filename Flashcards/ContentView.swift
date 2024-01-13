@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+
+#Preview {
+    ContentView().preferredColorScheme(.dark)
+}
+
+
 struct ContentView: View {
     
     @State private var search = ""
@@ -46,7 +52,7 @@ struct ContentView: View {
                     CardDetailView(card: card)
                 }
                 .navigationBarItems(trailing: NavigationLink {
-                    CardEditView(cardForm: CardForm())
+                    CardEditView()
                 } label: {
                     Image(systemName: "plus")
                 })
@@ -68,20 +74,6 @@ struct ContentView: View {
             card.searchText.contains(searchLower)
         }
     }
-}
-
-#Preview {
-    let main = ContentView().preferredColorScheme(.dark)
-    let detail = CardDetailView(card: Card(
-        id: "123",
-        front: "アニメが好きです",
-        back: "I like anime",
-        mainWords: ["アニメ", "好き"],
-        notes: "Simple sentence",
-        tags: ["phrase", "beginner"]
-    )).preferredColorScheme(.dark)
-    
-    return main
 }
 
 
@@ -110,6 +102,7 @@ struct CardItemView: View {
         })
     }
 }
+
 
 struct CardDetailView: View {
     
@@ -140,30 +133,45 @@ struct CardDetailView: View {
         Spacer()
         
         NavigationLink {
-            CardEditView(cardForm: CardForm(card: card))
+            CardEditView(
+                id: card.id,
+                front: card.front,
+                mainWords: card.mainWords.joined(separator: "、"),
+                back: card.back,
+                notes: card.notes,
+                tags: card.tags.joined(separator: " ")
+            )
         } label: {
             CustomButtonText(text: "Edit Card")
         }
     }
 }
 
+
 struct CardEditView: View {
     
-    @State var cardForm: CardForm
-    
+    @State var id: String = ""
+    @State var front: String = ""
+    @State var mainWords: String = ""
+    @State var back: String = ""
+    @State var notes: String = ""
+    @State var tags: String = ""
+
     var body: some View {
         
         Form {
-            TextField("Front", text: $cardForm.front)
+            MultilineTextField(text: $front, placeholder: "Japanese", color: .primary)
+            MultilineTextField(text: $mainWords, placeholder: "Main words", color: .primary.opacity(0.7))
+            MultilineTextField(text: $back, placeholder: "English", color: .orange.opacity(0.9))
+            MultilineTextField(text: $notes, placeholder: "Notes", color: .primary.opacity(0.7))
+            TextField("Tags", text: $tags)
+                .padding(.all, 8)
                 .font(.system(size: 25, weight: .regular))
-            TextField("Back", text: $cardForm.back)
-                .font(.system(size: 25, weight: .regular))
-            TextField("Notes", text: $cardForm.notes)
-                .font(.system(size: 25, weight: .regular))
+                .foregroundColor(.purple)
         }
             
-        CustomButton(text: cardForm.id.isEmpty ? "Create Card" : "Save Card") {
-            // TODO - create or save card
+        CustomButton(text: id.isEmpty ? "Create Card" : "Save Card") {
+            print("Saving card - TODO")
         }
     }
 }
@@ -183,6 +191,7 @@ struct CustomButton: View {
     }
 }
 
+
 struct CustomButtonText: View {
     
     var text: String
@@ -191,5 +200,28 @@ struct CustomButtonText: View {
         Text(text)
             .font(.system(size: 25, weight: .regular))
             .foregroundStyle(.cyan)
+    }
+}
+
+
+// https://www.appsloveworld.com/swift/100/110/swiftui-how-can-a-textfield-increase-dynamically-its-height-based-on-its-conten
+
+struct MultilineTextField: View {
+    
+    @Binding var text: String
+    var placeholder: String
+    var color: Color
+
+    var body: some View {
+        ZStack(alignment: .leading) {
+            TextEditor(text: $text)
+                .font(.system(size: 25, weight: .regular))
+                .foregroundColor(color)
+            Text(text.isEmpty ? placeholder : text)
+                .opacity(text.isEmpty ? 1 : 0)
+                .padding(.all, 8) // how to allign this correctly?
+                .font(.system(size: 25, weight: .regular))
+                .foregroundColor(.gray.opacity(0.6)) // TODO - what's the default placeholder color?
+        }
     }
 }
