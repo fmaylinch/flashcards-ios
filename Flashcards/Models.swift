@@ -35,13 +35,14 @@ struct CardsResponse: Decodable {
 
 struct Card: Encodable, Decodable, Identifiable, Hashable {
     
-    let id: String
+    let id: String?
     let front: String
     let back: String
     let mainWords: [String]
     let notes: String
     let tags: [String]
-    let files: [String]
+    let files: [String]? // TODO: This is nil when creating the card 
+    let tts: Bool
 
     var searchText: String {
         return front.lowercased() + " " + back.lowercased() + " " + notes.lowercased() + " " + tags.joined(separator: ". ") + "."
@@ -55,27 +56,7 @@ struct Card: Encodable, Decodable, Identifiable, Hashable {
         case notes = "notes"
         case tags = "tags"
         case files = "files"
-    }
-}
-
-class CardForm: ObservableObject {
-    @Published var id: String
-    @Published var front: String
-    @Published var back: String
-    @Published var notes: String
-
-    init() {
-        self.id = ""
-        self.front = ""
-        self.back = ""
-        self.notes = ""
-    }
-    
-    init(card: Card) {
-        self.id = card.id
-        self.front = card.front
-        self.back = card.back
-        self.notes = card.notes
+        case tts = "tts"
     }
 }
 
@@ -97,6 +78,7 @@ func messageCard(front: String, back: String) -> Card {
         mainWords: [],
         notes: "",
         tags: [],
-        files: []
+        files: [],
+        tts: false
     )
 }

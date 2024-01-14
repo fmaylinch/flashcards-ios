@@ -151,7 +151,7 @@ struct CardItemView: View {
                         .font(.system(size: 20, weight: .regular))
                         .foregroundStyle(.purple.opacity(0.5), .red)
                 }
-                if showOptions.showPlayButton && !card.files.isEmpty {
+                if showOptions.showPlayButton && !card.files!.isEmpty {
                     Image(systemName: "speaker.wave.2")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -159,7 +159,7 @@ struct CardItemView: View {
                         .padding(.vertical, 5)
                         .foregroundColor(.cyan)
                         .onTapGesture {
-                            apiPlay(file: card.files.randomElement()!)
+                            apiPlay(file: card.files!.randomElement()!)
                         }
                 }
             })

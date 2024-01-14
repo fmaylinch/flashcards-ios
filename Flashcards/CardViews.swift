@@ -37,7 +37,7 @@ struct CardDetailView: View {
         .padding(20)
         
         HStack(spacing: 0) {
-            ForEach(card.files, id: \.self) { file in
+            ForEach(card.files!, id: \.self) { file in
                 Image(systemName: "speaker.wave.2")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -61,7 +61,7 @@ struct CardDetailView: View {
         }.sheet(isPresented: $isEditCardPresented) {
             CardEditView(
                 isPresented: $isEditCardPresented,
-                id: card.id,
+                id: card.id!,
                 front: card.front,
                 mainWords: card.mainWords.joined(separator: " "),
                 back: card.back,
@@ -84,14 +84,12 @@ struct CardEditView: View {
     @State var notes: String = ""
     @State var tags: String = ""
     
-    @State private var playing = false
+    @State private var callingApi = false
     
     @State private var showAlert = false
     @State private var alertMessage = ""
 
     var body: some View {
-        
-        let card = messageCard(front: front, back: back) // we just need to pass `front`, actually
         
         Form {
             MultilineTextField(text: $front, placeholder: "Japanese", color: .primary)
@@ -102,18 +100,20 @@ struct CardEditView: View {
                     .frame(width: 30, height: 30)
                     .padding(.vertical, 5)
                     .foregroundColor(.cyan)
-                    .opacity(playing ? 0.3 : 1)
+                    .opacity(callingApi ? 0.3 : 1)
                     .onTapGesture {
-                        playing = true
-                        apiPost(data: card, path: "cards/tts", returnType: Card.self) { result in
+                        // TODO: we need a Card with just `front`
+                        let card = messageCard(front: front, back: back)
+                        callingApi = true
+                        api(method: "POST", data: card, path: "cards/tts", returnType: Card.self) { result in
                             do {
-                                let file = try result.get().files[0]
+                                let file = try result.get().files![0]
                                 apiPlay(file: file)
                             } catch {
                                 alertMessage = "Error: \(error)"
                                 showAlert = true
                             }
-                            playing = false
+                            callingApi = false
                         }
                     }
             }
@@ -133,10 +133,34 @@ struct CardEditView: View {
             Text(alertMessage)
         }
             
+        // TODO: we could pass callingApi to dim/disable the button
         CustomButton(text: id.isEmpty ? "Create Card" : "Save Card") {
-            print("Saving card")
-            // TODO: If the card has id, then save it, otherwise create it
-            isPresented.toggle()
+            
+            let path = id.isEmpty ? "cards" : "cards/\(id)"
+            let method = id.isEmpty ? "POST" : "PUT"
+            let card = Card(
+                id: id.isEmpty ? nil : id,
+                front: front,
+                back: back,
+                mainWords: mainWords.split(usingRegex: " +"),
+                notes: notes,
+                tags: tags.split(usingRegex: " +"),
+                files: nil,
+                tts: true // TODO: I think this is used in creation for now, only
+            )
+            
+            api(method: method, data: card, path: path, returnType: Card.self) { result in
+                callingApi = true
+                do {
+                    let card = try result.get()
+                    // TODO: update the list of cards
+                    isPresented.toggle()
+                } catch {
+                    alertMessage = "Error: \(error)"
+                    showAlert = true
+                }
+                callingApi = false
+            }
         }
     }
 }

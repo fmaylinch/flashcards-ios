@@ -33,7 +33,7 @@ func apiGet<T>(path: String, returnType: T.Type) async throws -> T where T : Dec
 }
 
 
-func apiPost<T>(data: Codable, path: String, returnType: T.Type, completion: @escaping (Result<T, Error>) -> Void) where T : Decodable {
+func api<T>(method: String, data: Codable, path: String, returnType: T.Type, completion: @escaping (Result<T, Error>) -> Void) where T : Decodable {
     
     // TODO: this part is like apiGet
     let url = "\(Constants.baseUrl)/\(path)"
@@ -42,7 +42,7 @@ func apiPost<T>(data: Codable, path: String, returnType: T.Type, completion: @es
     // TODO: get token from login
     request.addValue("Bearer: " + Constants.testToken, forHTTPHeaderField: "Authorization")
     
-    request.httpMethod = "POST"
+    request.httpMethod = method
     do {
         request.httpBody = try JSONEncoder().encode(data)
     } catch {
