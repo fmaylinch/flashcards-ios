@@ -18,25 +18,17 @@ struct ContentView: View {
     @State private var search = ""
     @State private var filteredCards: [Card] = []
     @StateObject private var cardsFromApi = CardsFromApi()
+    @StateObject private var showOptions = ShowOptions()
+    @State private var isEditCardPresented = false
     
-    @State private var mode = 1
-    private var modeText: String {
-        return switch mode {
-        case 0: "Japanese"
-        case 1: "All"
-        case 2: "English"
-        default: "(unexpected)"
-        }
-    }
-        
     var body: some View {
         NavigationStack {
             VStack {
-                ModeButtons(mode: $mode)
+                ModeButtons(showOptions: showOptions)
                     .padding(.horizontal, 40)
                                 
                 List(filteredCards) { card in
-                    CardItemView(card: card, mode: mode)
+                    CardItemView(card: card, showOptions: showOptions)
                 }
                 .searchable(text: $search)
                 .onChange(of: search, initial: false, filterCards)
@@ -48,17 +40,20 @@ struct ContentView: View {
                 .navigationDestination(for: Card.self) { card in
                     CardDetailView(card: card)
                 }
-                .navigationBarItems(trailing: NavigationLink {
-                    CardEditView()
-                } label: {
-                    Image(systemName: "plus")
-                })
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            isEditCardPresented.toggle()
+                        }) {
+                            Image(systemName: "plus")
+                        }
+                    }
+                }
+                .sheet(isPresented: $isEditCardPresented) {
+                    CardEditView(isPresented: $isEditCardPresented)
+                }
             }
         }
-    }
-    
-    private func changeMode() {
-        mode = (mode + 1) % 3
     }
     
     private func filterCards() {
@@ -73,58 +68,90 @@ struct ContentView: View {
     }
 }
 
+
+class ShowOptions : ObservableObject {
+    @Published var showJapanese = true
+    @Published var showEnglish = true
+    @Published var showTags = true
+    @Published var showPlayButton = true
+}
+
+
 struct ModeButtons: View {
     
-    @Binding var mode: Int
+    @ObservedObject var showOptions: ShowOptions
     
     var body: some View {
         HStack {
-            Button {
-                mode = 0
-            } label: {
-                Text("🇯🇵").font(.system(size: 40, weight: .regular))
-            }
+            ToggleButton(text: "🇯🇵", isOn: $showOptions.showJapanese)
             Spacer()
-            Button {
-                mode = 1
-            } label: {
-                Text("🌍").font(.system(size: 40, weight: .regular))
-            }
+            ToggleButton(text: "🇬🇧", isOn: $showOptions.showEnglish)
             Spacer()
-            Button {
-                mode = 2
-            } label: {
-                Text("🇬🇧").font(.system(size: 40, weight: .regular))
-            }
+            ToggleIconButton(image: "tag.fill", color: .purple, isOn: $showOptions.showTags)
+            Spacer()
+            ToggleIconButton(image: "speaker.wave.2", color: .cyan, isOn: $showOptions.showPlayButton)
         }
     }
 }
 
+struct ToggleButton: View {
+    let text: String
+    @Binding var isOn: Bool
+    
+    var body: some View {
+        Button {
+            isOn.toggle()
+        } label: {
+            Text(text)
+                .font(.system(size: 40, weight: .regular))
+                .opacity(isOn ? 1 : 0.3)
+        }
+    }
+}
+
+struct ToggleIconButton: View {
+    let image: String
+    let color: Color
+    @Binding var isOn: Bool
+    
+    var body: some View {
+        Button {
+            isOn.toggle()
+        } label: {
+            Image(systemName: image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 30, height: 30)
+                .foregroundColor(color)
+                .opacity(isOn ? 1 : 0.3)
+        }
+    }
+}
 
 struct CardItemView: View {
     
     var card: Card
-    var mode: Int
+    @ObservedObject var showOptions: ShowOptions
 
     var body: some View {
         NavigationLink(value: card) {
             VStack(alignment: .leading, content: {
-                if mode != 2 {
+                if showOptions.showJapanese {
                     Text(card.front)
                         .font(.system(size: 28, weight: .regular))
                 }
-                if mode != 0 {
-                    let color: Color = mode == 1 ? .orange.opacity(0.9) : .primary
+                if showOptions.showEnglish {
+                    let color: Color = showOptions.showJapanese ? .orange.opacity(0.9) : .primary
                     Text(card.back)
                         .font(.system(size: 22, weight: .regular))
                         .foregroundStyle(color, .red)
                 }
-                if mode == 1 {
-                    Text(card.tags.joined(separator: ", "))
+                if showOptions.showTags {
+                    Text(card.tags.joined(separator: " "))
                         .font(.system(size: 20, weight: .regular))
                         .foregroundStyle(.purple.opacity(0.5), .red)
                 }
-                if !card.files.isEmpty {
+                if showOptions.showPlayButton && !card.files.isEmpty {
                     Image(systemName: "speaker.wave.2")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -144,6 +171,8 @@ struct CardItemView: View {
 
 struct CardDetailView: View {
     
+    @State private var isEditCardPresented = false
+    
     var card: Card
     
     var body: some View {
@@ -162,7 +191,7 @@ struct CardDetailView: View {
                 .font(.system(size: 20, weight: .regular))
                 .padding(.bottom, 20)
                 .foregroundStyle(.gray, .red)
-            Text(card.tags.joined(separator: ", "))
+            Text(card.tags.joined(separator: " "))
                 .font(.system(size: 20, weight: .regular))
                 .foregroundStyle(.purple, .red)
         })
@@ -186,17 +215,20 @@ struct CardDetailView: View {
         
         Spacer()
         
-        NavigationLink {
+        Button {
+            isEditCardPresented = true
+        } label: {
+            CustomButtonText(text: "Edit Card")
+        }.sheet(isPresented: $isEditCardPresented) {
             CardEditView(
+                isPresented: $isEditCardPresented,
                 id: card.id,
                 front: card.front,
-                mainWords: card.mainWords.joined(separator: "、"),
+                mainWords: card.mainWords.joined(separator: " "),
                 back: card.back,
                 notes: card.notes,
                 tags: card.tags.joined(separator: " ")
             )
-        } label: {
-            CustomButtonText(text: "Edit Card")
         }
     }
 }
@@ -204,6 +236,8 @@ struct CardDetailView: View {
 
 // TODO: Open this view in a modal
 struct CardEditView: View {
+
+    @Binding var isPresented: Bool
     
     @State var id: String = ""
     @State var front: String = ""
@@ -226,7 +260,9 @@ struct CardEditView: View {
         }
             
         CustomButton(text: id.isEmpty ? "Create Card" : "Save Card") {
-            print("Saving card - TODO")
+            print("Saving card")
+            // TODO: If the card has id, then save it, otherwise create it
+            isPresented.toggle()
         }
     }
 }
@@ -269,14 +305,14 @@ struct MultilineTextField: View {
 
     var body: some View {
         ZStack(alignment: .leading) {
-            TextEditor(text: $text)
-                .font(.system(size: 25, weight: .regular))
-                .foregroundColor(color)
             Text(text.isEmpty ? placeholder : text)
                 .opacity(text.isEmpty ? 1 : 0)
                 .padding(.all, 8) // how to allign this correctly?
                 .font(.system(size: 25, weight: .regular))
                 .foregroundColor(.gray.opacity(0.6)) // TODO - what's the default placeholder color?
+            TextEditor(text: $text)
+                .font(.system(size: 25, weight: .regular))
+                .foregroundColor(color)
         }
     }
 }
