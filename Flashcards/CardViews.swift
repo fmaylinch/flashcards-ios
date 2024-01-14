@@ -83,14 +83,39 @@ struct CardEditView: View {
     @State var back: String = ""
     @State var notes: String = ""
     @State var tags: String = ""
+    
+    @State private var playing = false
+    
+    @State private var showAlert = false
+    @State private var alertMessage = ""
 
     var body: some View {
         
+        let card = messageCard(front: front, back: back) // we just need to pass `front`, actually
+        
         Form {
             MultilineTextField(text: $front, placeholder: "Japanese", color: .primary)
-            CustomButton(text: "Listen") {
-                // TODO: listen to text in `front`
-                
+            ZStack {
+                Image(systemName: "speaker.wave.2")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 30, height: 30)
+                    .padding(.vertical, 5)
+                    .foregroundColor(.cyan)
+                    .opacity(playing ? 0.3 : 1)
+                    .onTapGesture {
+                        playing = true
+                        apiPost(data: card, path: "cards/tts", returnType: Card.self) { result in
+                            do {
+                                let file = try result.get().files[0]
+                                apiPlay(file: file)
+                            } catch {
+                                alertMessage = "Error: \(error)"
+                                showAlert = true
+                            }
+                            playing = false
+                        }
+                    }
             }
             MultilineTextField(text: $mainWords, placeholder: "Main words", color: .primary.opacity(0.7))
             MultilineTextField(text: $back, placeholder: "English", color: .orange.opacity(0.9))
@@ -99,6 +124,13 @@ struct CardEditView: View {
                 .padding(.all, 8)
                 .font(.system(size: 25, weight: .regular))
                 .foregroundColor(.purple)
+        }
+        .alert("Alert", isPresented: $showAlert) {
+            Button("OK") {
+                showAlert = false
+            }
+        } message: {
+            Text(alertMessage)
         }
             
         CustomButton(text: id.isEmpty ? "Create Card" : "Save Card") {

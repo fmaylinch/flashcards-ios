@@ -20,7 +20,7 @@ class CardsFromApi: ObservableObject {
         }
         loaded = false
         do {
-            let cardsResponse = try await apiGet(CardsResponse.self, path: "cards/list")
+            let cardsResponse = try await apiGet(path: "cards/list", returnType: CardsResponse.self)
             cards = cardsResponse.cards.shuffled()
             loaded = true
         } catch {
@@ -33,7 +33,7 @@ struct CardsResponse: Decodable {
     let cards: [Card]
 }
 
-struct Card: Decodable, Identifiable, Hashable {
+struct Card: Encodable, Decodable, Identifiable, Hashable {
     
     let id: String
     let front: String

@@ -159,8 +159,7 @@ struct CardItemView: View {
                         .padding(.vertical, 5)
                         .foregroundColor(.cyan)
                         .onTapGesture {
-                            let url = "\(Constants.baseUrl)/audio/\(card.files.randomElement()!)"
-                            AudioPlayerManager.shared.playSound(from: url)
+                            apiPlay(file: card.files.randomElement()!)
                         }
                 }
             })
