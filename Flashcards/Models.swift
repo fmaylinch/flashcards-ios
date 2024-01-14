@@ -27,6 +27,34 @@ class CardsFromApi: ObservableObject {
             cards = [errorCard(error: error)]
         }
     }
+    
+    func updateCard(_ card: Card, updateAction: CardUpdateAction) {
+        switch updateAction {
+        case .create:
+            print("Inserting new card \(card.front)")
+            cards.insert(card, at: 0)
+        case .update:
+            if let index = cards.firstIndex(where: { $0.id == card.id }) {
+                print("Replacing card \(card.front) at index \(index)")
+                cards[index] = card
+            } else {
+                print("card \(card.id!) not found")
+            }
+        case .delete:
+            if let index = cards.firstIndex(where: { $0.id == card.id }) {
+                print("Removing card \(card.front) at index \(index)")
+                cards.remove(at: index)
+            } else {
+                print("card \(card.id!) not found")
+            }
+        }
+    }
+}
+
+enum CardUpdateAction {
+    case create
+    case update
+    case delete
 }
 
 struct CardsResponse: Decodable {

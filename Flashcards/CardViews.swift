@@ -10,9 +10,11 @@ import SwiftUI
 
 struct CardDetailView: View {
     
-    @State private var isEditCardPresented = false
+    @State var card: Card
+    var updateCard: (Card, CardUpdateAction) -> Void
     
-    var card: Card
+    @State private var isEditCardPresented = false
+
     
     var body: some View {
         
@@ -61,6 +63,10 @@ struct CardDetailView: View {
         }.sheet(isPresented: $isEditCardPresented) {
             CardEditView(
                 isPresented: $isEditCardPresented,
+                updateCard: { (card, action) in
+                    self.card = card
+                    updateCard(card, action)
+                },
                 id: card.id!,
                 front: card.front,
                 mainWords: card.mainWords.joined(separator: " "),
@@ -74,10 +80,14 @@ struct CardDetailView: View {
 
 
 struct CardEditView: View {
-
-    @Binding var isPresented: Bool
     
-    @State var id: String = ""
+    @Binding var isPresented: Bool
+    var updateCard: (Card, CardUpdateAction) -> Void
+
+    var id: String = ""
+    var isCreatingCard: Bool {
+        return id.isEmpty
+    }
     @State var front: String = ""
     @State var mainWords: String = ""
     @State var back: String = ""
@@ -85,7 +95,6 @@ struct CardEditView: View {
     @State var tags: String = ""
     
     @State private var callingApi = false
-    
     @State private var showAlert = false
     @State private var alertMessage = ""
 
@@ -134,12 +143,12 @@ struct CardEditView: View {
         }
             
         // TODO: we could pass callingApi to dim/disable the button
-        CustomButton(text: id.isEmpty ? "Create Card" : "Save Card") {
+        CustomButton(text: isCreatingCard ? "Create Card" : "Save Card") {
             
-            let path = id.isEmpty ? "cards" : "cards/\(id)"
-            let method = id.isEmpty ? "POST" : "PUT"
+            let path = isCreatingCard ? "cards" : "cards/\(id)"
+            let method = isCreatingCard ? "POST" : "PUT"
             let card = Card(
-                id: id.isEmpty ? nil : id,
+                id: isCreatingCard ? nil : id,
                 front: front,
                 back: back,
                 mainWords: mainWords.split(usingRegex: " +"),
@@ -153,7 +162,7 @@ struct CardEditView: View {
                 callingApi = true
                 do {
                     let card = try result.get()
-                    // TODO: update the list of cards
+                    updateCard(card, isCreatingCard ? .create : .update)
                     isPresented.toggle()
                 } catch {
                     alertMessage = "Error: \(error)"

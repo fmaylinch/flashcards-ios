@@ -38,7 +38,9 @@ struct ContentView: View {
                 }
                 .navigationTitle("List")
                 .navigationDestination(for: Card.self) { card in
-                    CardDetailView(card: card)
+                    CardDetailView(card: card) { (card, action) in
+                        cardsFromApi.updateCard(card, updateAction: action)
+                    }
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -50,7 +52,13 @@ struct ContentView: View {
                     }
                 }
                 .sheet(isPresented: $isEditCardPresented) {
-                    CardEditView(isPresented: $isEditCardPresented)
+                    // TODO: when coming from this sheet, the List is not updated
+                    //   because the .task is not called.
+                    // When coming from CardDetailView (after editing the card),
+                    //   the list is updated because .task is called.
+                    CardEditView(isPresented: $isEditCardPresented) { (card, action) in
+                        cardsFromApi.updateCard(card, updateAction: action)
+                    }
                 }
             }
         }

@@ -60,7 +60,9 @@ func api<T>(method: String, data: Codable, path: String, returnType: T.Type, com
             } else {
                 if let data = data {
                     let result = try JSONDecoder().decode(returnType, from: data)
-                    completion(.success(result))
+                    DispatchQueue.main.async {
+                        completion(.success(result))
+                    }
                 } else {
                     completion(.failure(ApiError.error("API response is 200 but it doesn't contain data")))
                 }
