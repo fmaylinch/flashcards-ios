@@ -19,24 +19,8 @@ class CardsFromApi: ObservableObject {
             return
         }
         loaded = false
-        let url = "\(Constants.baseUrl)/cards/list"
-        var request = URLRequest(url: URL(string: url)!)
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        // TODO: get from login
-        let token = Constants.testToken
-        request.addValue("Bearer: " + token, forHTTPHeaderField: "Authorization")
-        
         do {
-            print("Getting cards from \(url)")
-            let (data, response) = try await URLSession.shared.data(for: request)
-            if let httpResponse = response as? HTTPURLResponse {
-                if httpResponse.statusCode != 200 {
-                    cards = [errorCard(text: "API response code: \(httpResponse.statusCode)")]
-                    return
-                }
-            }
-            let cardsResponse = try JSONDecoder().decode(CardsResponse.self, from: data)
+            let cardsResponse = try await apiGet(CardsResponse.self, path: "cards/list")
             cards = cardsResponse.cards.shuffled()
             loaded = true
         } catch {
