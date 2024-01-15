@@ -26,6 +26,14 @@ struct ContentView: View {
             VStack {
                 ModeButtons(showOptions: showOptions)
                     .padding(.horizontal, 40)
+                
+                HStack {
+                    Spacer()
+                    let cardCount = search.isEmpty ? "\(filteredCards.count)" : "\(filteredCards.count) / \(cardsModel.cards.count)"
+                    Text(cardsModel.loaded ? "\(cardCount) cards" : "loading cards")
+                        .foregroundColor(.gray)
+                        .padding(.trailing, 25)
+                }
                                 
                 List(filteredCards) { card in
                     CardItemView(card: card, showOptions: showOptions)
@@ -39,7 +47,7 @@ struct ContentView: View {
                         }
                     }
                 }
-                .navigationTitle("List")
+                //.navigationTitle("List")
                 .navigationDestination(for: Card.self) { card in
                     CardDetailView(card: card) { (card, action) in
                         cardsModel.updateCard(card, updateAction: action)
@@ -161,12 +169,12 @@ struct CardItemView: View {
                     let color: Color = showOptions.showJapanese ? .orange.opacity(0.9) : .primary
                     Text(card.back)
                         .font(.system(size: 22, weight: .regular))
-                        .foregroundStyle(color, .red)
+                        .foregroundColor(color)
                 }
                 if showOptions.showTags {
                     Text(card.tags.joined(separator: " "))
                         .font(.system(size: 20, weight: .regular))
-                        .foregroundStyle(.purple.opacity(0.5), .red)
+                        .foregroundColor(.purple.opacity(0.5))
                 }
                 if showOptions.showPlayButton && !card.files!.isEmpty {
                     Image(systemName: "speaker.wave.2")

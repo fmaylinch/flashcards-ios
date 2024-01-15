@@ -11,13 +11,14 @@ import Foundation
 class CardsModel: ObservableObject {
     
     @Published var cards: [Card] = []
-    var loaded = false
+    @Published var loaded = false
     
     func fetch(forceReload: Bool, completion: @escaping (Bool) -> Void) {
         if loaded && !forceReload {
             completion(false)
             return
         }
+        loaded = false
         // TODO: organize API calls
         api(method: "GET", path: "cards/list", returnType: CardsResponse.self) { result in
             do {
