@@ -18,6 +18,7 @@ class CardsModel: ObservableObject {
             completion(false)
             return
         }
+        // TODO: organize API calls
         api(method: "GET", path: "cards/list", returnType: CardsResponse.self) { result in
             do {
                 self.cards = try result.get().cards

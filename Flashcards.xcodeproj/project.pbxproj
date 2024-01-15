@@ -9,10 +9,11 @@
 /* Begin PBXBuildFile section */
 		532BBE1A2B532B7300C4DA73 /* AudioPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE192B532B7300C4DA73 /* AudioPlayerManager.swift */; };
 		532BBE1C2B532C5A00C4DA73 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE1B2B532C5A00C4DA73 /* Constants.swift */; };
-		532BBE1F2B54373D00C4DA73 /* CardViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE1E2B54373D00C4DA73 /* CardViews.swift */; };
+		532BBE1F2B54373D00C4DA73 /* CardEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE1E2B54373D00C4DA73 /* CardEditView.swift */; };
 		532BBE212B54382F00C4DA73 /* UtilViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE202B54382F00C4DA73 /* UtilViews.swift */; };
 		532BBE232B543ABE00C4DA73 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE222B543ABE00C4DA73 /* Api.swift */; };
 		532BBE252B54591E00C4DA73 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE242B54591E00C4DA73 /* Util.swift */; };
+		536D35552B55D23E000E9E71 /* CardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536D35542B55D23E000E9E71 /* CardDetailView.swift */; };
 		53BC45062B4B359F00BD4710 /* FlashcardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BC45052B4B359F00BD4710 /* FlashcardsApp.swift */; };
 		53BC45082B4B359F00BD4710 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BC45072B4B359F00BD4710 /* ContentView.swift */; };
 		53BC450A2B4B35A000BD4710 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53BC45092B4B35A000BD4710 /* Assets.xcassets */; };
@@ -23,10 +24,11 @@
 /* Begin PBXFileReference section */
 		532BBE192B532B7300C4DA73 /* AudioPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerManager.swift; sourceTree = "<group>"; };
 		532BBE1B2B532C5A00C4DA73 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		532BBE1E2B54373D00C4DA73 /* CardViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViews.swift; sourceTree = "<group>"; };
+		532BBE1E2B54373D00C4DA73 /* CardEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardEditView.swift; sourceTree = "<group>"; };
 		532BBE202B54382F00C4DA73 /* UtilViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilViews.swift; sourceTree = "<group>"; };
 		532BBE222B543ABE00C4DA73 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		532BBE242B54591E00C4DA73 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
+		536D35542B55D23E000E9E71 /* CardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailView.swift; sourceTree = "<group>"; };
 		53BC45022B4B359F00BD4710 /* Flashcards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Flashcards.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53BC45052B4B359F00BD4710 /* FlashcardsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardsApp.swift; sourceTree = "<group>"; };
 		53BC45072B4B359F00BD4710 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -71,7 +73,8 @@
 				532BBE222B543ABE00C4DA73 /* Api.swift */,
 				53BC45092B4B35A000BD4710 /* Assets.xcassets */,
 				532BBE192B532B7300C4DA73 /* AudioPlayerManager.swift */,
-				532BBE1E2B54373D00C4DA73 /* CardViews.swift */,
+				536D35542B55D23E000E9E71 /* CardDetailView.swift */,
+				532BBE1E2B54373D00C4DA73 /* CardEditView.swift */,
 				532BBE1B2B532C5A00C4DA73 /* Constants.swift */,
 				53BC45072B4B359F00BD4710 /* ContentView.swift */,
 				53BC45052B4B359F00BD4710 /* FlashcardsApp.swift */,
@@ -168,7 +171,8 @@
 				53BC45082B4B359F00BD4710 /* ContentView.swift in Sources */,
 				532BBE212B54382F00C4DA73 /* UtilViews.swift in Sources */,
 				53BC45062B4B359F00BD4710 /* FlashcardsApp.swift in Sources */,
-				532BBE1F2B54373D00C4DA73 /* CardViews.swift in Sources */,
+				532BBE1F2B54373D00C4DA73 /* CardEditView.swift in Sources */,
+				536D35552B55D23E000E9E71 /* CardDetailView.swift in Sources */,
 				532BBE232B543ABE00C4DA73 /* Api.swift in Sources */,
 				532BBE1C2B532C5A00C4DA73 /* Constants.swift in Sources */,
 			);
