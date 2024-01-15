@@ -8,23 +8,24 @@
 import Foundation
 
 @MainActor
-class CardsFromApi: ObservableObject {
+class CardsModel: ObservableObject {
     
     @Published var cards: [Card] = []
     var loaded = false
     
-    func fetch(forceReload: Bool) async {
+    func fetch(forceReload: Bool, completion: @escaping (Bool) -> Void) {
         if loaded && !forceReload {
-            print("Cards already loaded")
+            completion(false)
             return
         }
-        loaded = false
-        do {
-            let cardsResponse = try await apiGet(path: "cards/list", returnType: CardsResponse.self)
-            cards = cardsResponse.cards.shuffled()
-            loaded = true
-        } catch {
-            cards = [errorCard(error: error)]
+        api(method: "GET", path: "cards/list", returnType: CardsResponse.self) { result in
+            do {
+                self.cards = try result.get().cards
+            } catch {
+                self.cards = [errorCard(error: error)] // TODO: we return the error as a card, improve this
+            }
+            self.loaded = true
+            completion(true)
         }
     }
     

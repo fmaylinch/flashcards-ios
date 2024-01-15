@@ -17,7 +17,7 @@ struct ContentView: View {
     
     @State private var search = ""
     @State private var filteredCards: [Card] = []
-    @StateObject private var cardsFromApi = CardsFromApi()
+    @StateObject private var cardsModel = CardsModel()
     @StateObject private var showOptions = ShowOptions()
     @State private var isEditCardPresented = false
     
@@ -33,13 +33,17 @@ struct ContentView: View {
                 .searchable(text: $search)
                 .onChange(of: search, initial: false, filterCards)
                 .task {
-                    await cardsFromApi.fetch(forceReload: false)
-                    filterCards()
+                    cardsModel.fetch(forceReload: false) { loaded in
+                        if loaded {
+                            filterCards()
+                        }
+                    }
                 }
                 .navigationTitle("List")
                 .navigationDestination(for: Card.self) { card in
                     CardDetailView(card: card) { (card, action) in
-                        cardsFromApi.updateCard(card, updateAction: action)
+                        cardsModel.updateCard(card, updateAction: action)
+                        filterCards()
                     }
                 }
                 .toolbar {
@@ -57,7 +61,8 @@ struct ContentView: View {
                     // When coming from CardDetailView (after editing the card),
                     //   the list is updated because .task is called.
                     CardEditView(isPresented: $isEditCardPresented) { (card, action) in
-                        cardsFromApi.updateCard(card, updateAction: action)
+                        cardsModel.updateCard(card, updateAction: action)
+                        filterCards()
                     }
                 }
             }
@@ -66,11 +71,11 @@ struct ContentView: View {
     
     private func filterCards() {
         if search.isEmpty {
-            filteredCards = cardsFromApi.cards
+            filteredCards = cardsModel.cards
             return
         }
         let searchLower = search.lowercased()
-        filteredCards = cardsFromApi.cards.filter { card in
+        filteredCards = cardsModel.cards.filter { card in
             card.searchText.contains(searchLower)
         }
     }

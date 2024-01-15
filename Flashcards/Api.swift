@@ -14,56 +14,46 @@ func apiPlay(file: String) {
 }
 
 
-func apiGet<T>(path: String, returnType: T.Type) async throws -> T where T : Decodable {
+func api<T>(method: String,
+            data: Codable? = nil,
+            path: String,
+            returnType: T.Type,
+            completion: @escaping (Result<T, Error>) -> Void) where T : Decodable {
     
     let url = "\(Constants.baseUrl)/\(path)"
     var request = URLRequest(url: URL(string: url)!)
     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
     // TODO: get token from login
     request.addValue("Bearer: " + Constants.testToken, forHTTPHeaderField: "Authorization")
-    
-    print("Callling: \(url)")
-    let (data, response) = try await URLSession.shared.data(for: request)
-    if let httpResponse = response as? HTTPURLResponse {
-        if httpResponse.statusCode != 200 {
-            throw ApiError.error("API response code: \(httpResponse.statusCode)")
+    request.httpMethod = method
+
+    if let data = data {
+        do {
+            request.httpBody = try JSONEncoder().encode(data)
+        } catch {
+            completion(.failure(error))
         }
     }
-    return try JSONDecoder().decode(returnType, from: data)
-}
-
-
-func api<T>(method: String, data: Codable, path: String, returnType: T.Type, completion: @escaping (Result<T, Error>) -> Void) where T : Decodable {
     
-    // TODO: this part is like apiGet
-    let url = "\(Constants.baseUrl)/\(path)"
-    var request = URLRequest(url: URL(string: url)!)
-    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-    // TODO: get token from login
-    request.addValue("Bearer: " + Constants.testToken, forHTTPHeaderField: "Authorization")
-    
-    request.httpMethod = method
-    do {
-        request.httpBody = try JSONEncoder().encode(data)
-    } catch {
-        completion(.failure(error))
-    }
-    
-    print("Callling: \(url)")
+    print("API call \(method) to \(url)")
     
     let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
         do {
             if let error = error {
+                print("API response -> there was an error: \(error)")
                 completion(.failure(error))
             } else if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                print("API response -> status code is not 200 but: \(httpResponse.statusCode)")
                 completion(.failure(ApiError.error("API response code: \(httpResponse.statusCode)")))
             } else {
                 if let data = data {
                     let result = try JSONDecoder().decode(returnType, from: data)
                     DispatchQueue.main.async {
+                        print("API response -> OK")
                         completion(.success(result))
                     }
                 } else {
+                    print("API response -> status code is 200 but there's no data")
                     completion(.failure(ApiError.error("API response is 200 but it doesn't contain data")))
                 }
             }
