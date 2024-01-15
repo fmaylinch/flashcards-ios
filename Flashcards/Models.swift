@@ -22,7 +22,7 @@ class CardsModel: ObservableObject {
         // TODO: organize API calls
         api(method: "GET", path: "cards/list", returnType: CardsResponse.self) { result in
             do {
-                self.cards = try result.get().cards
+                self.cards = try result.get().cards.reversed() // reversed is from newest (I think), I could sort by updated
             } catch {
                 self.cards = [errorCard(error: error)] // TODO: we return the error as a card, improve this
             }

@@ -41,13 +41,10 @@ struct ContentView: View {
                 .searchable(text: $search)
                 .onChange(of: search, initial: false, filterCards)
                 .task {
-                    cardsModel.fetch(forceReload: false) { loaded in
-                        if loaded {
-                            filterCards()
-                        }
+                    if !cardsModel.loaded {
+                        loadCards(forceReload: false)
                     }
                 }
-                //.navigationTitle("List")
                 .navigationDestination(for: Card.self) { card in
                     CardDetailView(card: card) { (card, action) in
                         cardsModel.updateCard(card, updateAction: action)
@@ -56,14 +53,25 @@ struct ContentView: View {
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
+                        Button {
+                            cardsModel.cards.shuffle()
+                            filterCards()
+                        } label: {
+                            ToolbarIcon(systemName: "shuffle")
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            loadCards(forceReload: true)
+                        } label: {
+                            ToolbarIcon(systemName: "arrow.circlepath")
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
                             isEditCardPresented.toggle()
-                        }) {
-                            Image(systemName: "plus")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 20, height: 20)
-                                .foregroundColor(.cyan)
+                        } label: {
+                            ToolbarIcon(systemName: "plus")
                         }
                     }
                 }
@@ -77,6 +85,15 @@ struct ContentView: View {
                         filterCards()
                     }
                 }
+            }
+        }
+    }
+    
+    private func loadCards(forceReload: Bool) {
+        filteredCards = []
+        cardsModel.fetch(forceReload: forceReload) { loaded in
+            if loaded {
+                filterCards()
             }
         }
     }
@@ -189,5 +206,18 @@ struct CardItemView: View {
                 }
             })
         }
+    }
+}
+
+struct ToolbarIcon: View {
+    
+    var systemName: String
+    
+    var body: some View {
+        Image(systemName: systemName)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 20, height: 20)
+            .foregroundColor(.cyan)
     }
 }
