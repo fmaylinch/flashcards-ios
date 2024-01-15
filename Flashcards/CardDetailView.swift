@@ -11,7 +11,8 @@ struct CardDetailView: View {
     
     @State var card: Card
     var updateCard: (Card, CardUpdateAction) -> Void
-    
+    @State private var isCardDeleted: Bool = false
+
     @State private var isEditCardPresented = false
 
     
@@ -55,22 +56,17 @@ struct CardDetailView: View {
         
         Spacer()
         
-        Button {
+        CustomButton(text: isCardDeleted ? "Recreate Card" : "Edit Card") {
             isEditCardPresented = true
-        } label: {
-            CustomButtonText(text: "Edit Card")
         }.sheet(isPresented: $isEditCardPresented) {
             CardEditView(
                 isPresented: $isEditCardPresented,
                 updateCard: { (card, action) in
                     self.card = card
-                    if action == .delete {
-                        print("Go back")
-                        // TODO: go back, maybe I need to use the NavigationPath
-                    }
                     updateCard(card, action)
+                    isCardDeleted = action == .delete
                 },
-                id: card.id!,
+                id: isCardDeleted ? "" : card.id!,
                 front: card.front,
                 mainWords: card.mainWords.joined(separator: " "),
                 back: card.back,

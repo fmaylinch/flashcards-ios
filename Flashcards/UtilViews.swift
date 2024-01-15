@@ -11,26 +11,18 @@ import SwiftUI
 struct CustomButton: View {
     
     var text: String
+    var color: Color = .cyan
     var action: () -> Void
     
     var body: some View {
         Button {
             action()
         } label: {
-            CustomButtonText(text: text)
+            Text(text)
+                .font(.system(size: 25, weight: .regular))
+                .foregroundStyle(color)
+                .padding(10)
         }
-    }
-}
-
-
-struct CustomButtonText: View {
-    
-    var text: String
-    
-    var body: some View {
-        Text(text)
-            .font(.system(size: 25, weight: .regular))
-            .foregroundStyle(.cyan)
     }
 }
 

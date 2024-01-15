@@ -16,7 +16,7 @@ struct CardEditView: View {
     var isCreatingCard: Bool {
         return id.isEmpty
     }
-    @State var front: String = "猫だ"
+    @State var front: String = ""
     @State var mainWords: String = ""
     @State var back: String = ""
     @State var notes: String = ""
@@ -74,28 +74,30 @@ struct CardEditView: View {
             Text(alertMessage)
         }
         
-        CustomButton(text: "Delete") {
-            isDeleteConfirmationPresented = true
-        }.confirmationDialog("Delete the card?",
-                             isPresented: $isDeleteConfirmationPresented,
-                             titleVisibility: .visible) {
-            Button("Delete", role: .destructive) {
-                callingApi = true
-                
-                api(method: "DELETE", path: "cards/\(id)", returnType: Card.self) { result in
-                    do {
-                        let deletedCard = try result.get()
-                        updateCard(deletedCard, .delete)
-                        isPresented = false
-                    } catch {
-                        alertMessage = "Error: \(error)"
-                        isAlertPresented = true
+        if !isCreatingCard {
+            CustomButton(text: "Delete", color: .red) {
+                isDeleteConfirmationPresented = true
+            }.confirmationDialog("Delete the card?",
+                                 isPresented: $isDeleteConfirmationPresented,
+                                 titleVisibility: .visible) {
+                Button("Delete", role: .destructive) {
+                    callingApi = true
+                    
+                    api(method: "DELETE", path: "cards/\(id)", returnType: Card.self) { result in
+                        do {
+                            let deletedCard = try result.get()
+                            updateCard(deletedCard, .delete)
+                            isPresented = false
+                        } catch {
+                            alertMessage = "Error: \(error)"
+                            isAlertPresented = true
+                        }
+                        callingApi = false
                     }
-                    callingApi = false
                 }
-            }
-            Button("Cancel", role: .cancel) {
-                // nothing
+                Button("Cancel", role: .cancel) {
+                    // nothing
+                }
             }
         }
             
