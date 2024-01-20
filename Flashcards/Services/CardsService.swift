@@ -16,9 +16,20 @@ class CardsService {
         AudioPlayerManager.shared.playSound(from: url)
     }
     
+    func generateAndPlayAudio(text: String) async throws {
+        let cardToListen = simpleCard(front: text)
+        let testCard = try await CardsService.shared.call(
+            method: "POST",
+            path: "cards/tts",
+            data: cardToListen,
+            returnType: Card.self)
+        let file = testCard.files![0]
+        CardsService.shared.playAudio(file: file)
+    }
+        
     func call<T>(method: String,
-                 data: Codable? = nil,
                  path: String,
+                 data: Codable? = nil,
                  returnType: T.Type) async throws -> T where T : Decodable {
         
         let url = "\(Constants.baseUrl)/\(path)"

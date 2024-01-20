@@ -20,7 +20,6 @@ class CardsModel: ObservableObject {
         loaded = false
         let cardsResponse = try await CardsService.shared.call(method: "GET", path: "cards/list", returnType: CardsResponse.self)
         self.cards = cardsResponse.cards.reversed()
-        // self.cards = [errorCard(error: error)]
         
         self.loaded = true
         return true
@@ -92,19 +91,18 @@ func errorCard(error: Error) -> Card {
 }
 
 func errorCard(text: String) -> Card {
-    return messageCard(front: "ごめんなさい！", back: text)
+    return simpleCard(front: "ごめんなさい！", back: text)
 }
 
-/** Dummy card to show a message */
-func messageCard(front: String, back: String) -> Card {
+func simpleCard(front: String, back: String = "") -> Card {
     return Card(
-        id: "",
+        id: nil,
         front: front,
         back: back,
         mainWords: [],
         notes: "",
         tags: [],
-        files: [],
+        files: nil,
         tts: false
     )
 }

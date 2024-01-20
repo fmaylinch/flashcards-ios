@@ -9,9 +9,15 @@ import SwiftUI
 
 
 #Preview {
-    ContentView().preferredColorScheme(.dark)
+    // ContentView().preferredColorScheme(.dark)
+    TestView().preferredColorScheme(.dark)
 }
 
+struct TestView: View {
+    var body: some View {
+        Text("Hello")
+    }
+}
 
 struct ContentView: View {
     
