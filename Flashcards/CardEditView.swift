@@ -35,59 +35,44 @@ struct CardEditView: View {
             
             HStack {
                 
-                Image(systemName: "speaker.wave.2")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 30, height: 30)
-                    .foregroundColor(.cyan)
-                    .opacity(isCallingApiPlay ? 0.3 : 1)
-                    .padding(.trailing, 20)
-                    .onTapGesture {
+                ActionButton(imageName: "speaker.wave.2", isCallingApi: isCallingApiPlay) {
+                    if cleanString(front).isEmpty {
+                        return
+                    }
+                    // TODO: using messageCard, but actually we just need to set `front`
+                    let card = messageCard(front: front, back: back)
+                    isCallingApiPlay = true
+                    api(method: "POST", data: card, path: "cards/tts", returnType: Card.self) { result in
+                        do {
+                            let file = try result.get().files![0]
+                            apiPlay(file: file)
+                        } catch {
+                            alertMessage = "Error: \(error)"
+                            isAlertPresented = true
+                        }
+                        isCallingApiPlay = false
+                    }
+                }
+                
+                ActionButton(imageName: "gear", isCallingApi: isCallingOpenAI) {
+                    Task {
                         if cleanString(front).isEmpty {
                             return
                         }
-                        // TODO: using messageCard, but actually we just need to set `front`
-                        let card = messageCard(front: front, back: back)
-                        isCallingApiPlay = true
-                        api(method: "POST", data: card, path: "cards/tts", returnType: Card.self) { result in
-                            do {
-                                let file = try result.get().files![0]
-                                apiPlay(file: file)
-                            } catch {
-                                alertMessage = "Error: \(error)"
-                                isAlertPresented = true
-                            }
-                            isCallingApiPlay = false
+                        isCallingOpenAI = true
+                        do {
+                            let message = "From a Japanese sentence, I want the English translation and the main words in Japanese (omitting particles and markers).\nThe answer must be in JSON format, with fields \"translation\" and \"words\".\nHere's the Japanese sentence: \(front)"
+                            let json = try await OpenAIService().send(message: message)
+                            let gptAnswer = try JSONDecoder().decode(GptAnswer.self, from: json.data(using: .utf8)!)
+                            back = gptAnswer.translation
+                            mainWords = gptAnswer.words.joined(separator: " ")
+                        } catch {
+                            notes = error.localizedDescription
                         }
-
+                        isCallingOpenAI = false
                     }
+                }
 
-                Image(systemName: "gear")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 30, height: 30)
-                    .padding(.trailing, 20)
-                    .foregroundColor(.cyan)
-                    .opacity(isCallingOpenAI ? 0.3 : 1)
-                    .onTapGesture {
-                        Task {
-                            if cleanString(front).isEmpty {
-                                return
-                            }
-                            isCallingOpenAI = true
-                            do {
-                                let message = "From a Japanese sentence, I want the English translation and the main words in Japanese (omitting particles and markers).\nThe answer must be in JSON format, with fields \"translation\" and \"words\".\nHere's the Japanese sentence: \(front)"
-                                let json = try await OpenAIService().send(message: message)
-                                let gptAnswer = try JSONDecoder().decode(GptAnswer.self, from: json.data(using: .utf8)!)
-                                back = gptAnswer.translation
-                                mainWords = gptAnswer.words.joined(separator: " ")
-                            } catch {
-                                notes = error.localizedDescription
-                            }
-                            isCallingOpenAI = false
-                        }
-
-                    }
             }
             .padding(.vertical, 5)
 
@@ -163,6 +148,23 @@ struct CardEditView: View {
 
 func cleanString(_ str: String) -> String {
     return str.trimmingCharacters(in: .whitespacesAndNewlines)
+}
+
+struct ActionButton: View {
+    let imageName: String
+    let isCallingApi: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Image(systemName: imageName)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 30, height: 30)
+            .foregroundColor(.cyan)
+            .opacity(isCallingApi ? 0.3 : 1)
+            .padding(.trailing, 20)
+            .onTapGesture { action() } // I had problems using Button callback
+    }
 }
 
 struct GptAnswer: Decodable {
