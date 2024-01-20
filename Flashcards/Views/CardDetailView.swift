@@ -1,10 +1,3 @@
-//
-//  CardDetailView.swift
-//  Flashcards
-//
-//  Created by Ferran Maylinch carrasco on 15.01.2024.
-//
-
 import SwiftUI
 
 struct CardDetailView: View {
@@ -40,7 +33,7 @@ struct CardDetailView: View {
         .padding(20)
         
         HStack(spacing: 0) {
-            ForEach(card.files!, id: \.self) { file in
+            ForEach(card.files, id: \.self) { file in
                 Image(systemName: "speaker.wave.2")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -67,7 +60,7 @@ struct CardDetailView: View {
                     updateCard(card, action)
                     isCardDeleted = action == .delete
                 },
-                id: isCardDeleted ? "" : card.id!,
+                id: isCardDeleted ? "" : card.id,
                 front: card.front,
                 mainWords: card.mainWords.joined(separator: "、"),
                 back: card.back,

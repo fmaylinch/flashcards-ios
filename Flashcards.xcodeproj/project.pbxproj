@@ -19,7 +19,7 @@
 		53BC45082B4B359F00BD4710 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BC45072B4B359F00BD4710 /* ContentView.swift */; };
 		53BC450A2B4B35A000BD4710 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53BC45092B4B35A000BD4710 /* Assets.xcassets */; };
 		53BC450D2B4B35A000BD4710 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53BC450C2B4B35A000BD4710 /* Preview Assets.xcassets */; };
-		53FF07E22B4C18CC005CB29C /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FF07E12B4C18CC005CB29C /* Models.swift */; };
+		53FF07E22B4C18CC005CB29C /* CardsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FF07E12B4C18CC005CB29C /* CardsModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,7 +37,7 @@
 		53BC45092B4B35A000BD4710 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		53BC450C2B4B35A000BD4710 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		53CE2BBA2B4C3B8D001536B6 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		53FF07E12B4C18CC005CB29C /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		53FF07E12B4C18CC005CB29C /* CardsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsModel.swift; sourceTree = "<group>"; };
 		53FF07E32B4C25F0005CB29C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -117,7 +117,7 @@
 		53DBDE4E2B5C0A550005D8C5 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				53FF07E12B4C18CC005CB29C /* Models.swift */,
+				53FF07E12B4C18CC005CB29C /* CardsModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -192,7 +192,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				53FF07E22B4C18CC005CB29C /* Models.swift in Sources */,
+				53FF07E22B4C18CC005CB29C /* CardsModel.swift in Sources */,
 				532BBE252B54591E00C4DA73 /* Util.swift in Sources */,
 				532BBE1A2B532B7300C4DA73 /* AudioPlayerManager.swift in Sources */,
 				53BC45082B4B359F00BD4710 /* ContentView.swift in Sources */,

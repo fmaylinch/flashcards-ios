@@ -1,10 +1,3 @@
-//
-//  CardViews.swift
-//  Flashcards
-//
-//  Created by Ferran Maylinch carrasco on 14.01.2024.
-//
-
 import SwiftUI
 
 struct CardEditView: View {
@@ -106,18 +99,17 @@ struct CardEditView: View {
         }
         isCallingOpenAI = true
         await tryOrAlert {
-            let prompt = "From a Japanese sentence, I want the English translation and the main words in Japanese.\nThe answer must be in JSON format, with fields \"translation\" and \"words\".\nFor the 'words', only include the most important words of the sentence, do not include particles, markers, or words that appear frequently in Japanese sentences. \nHere's the Japanese sentence: \(text)"
-            let json = try await OpenAIService().send(message: prompt)
-            let gptAnswer = try JSONDecoder().decode(GptAnswer.self, from: json.data(using: .utf8)!)
+            let prompt = "From a Japanese sentence, I want the English translation and the main words in Japanese.\nThe answer must be in JSON format, with fields \"translation\" and \"mainWords\".\nFor the 'mainWords', only include the most important words of the sentence, do not include particles, markers, or words that appear frequently in Japanese sentences. \nHere's the Japanese sentence: \(text)"
+            let gptAnswer = try await OpenAIService().send(prompt: prompt, answerType: GptAnswer.self)
             back = gptAnswer.translation
-            mainWords = gptAnswer.words.joined(separator: "、")
+            mainWords = gptAnswer.mainWords.joined(separator: "、")
         }
         isCallingOpenAI = false
     }
     
     func deleteCard() async {
         await tryOrAlert {
-            let deletedCard = try await CardsService.shared.call(method: "DELETE", path: "cards/\(id)", returnType: Card.self)
+            let deletedCard = try await CardsService.shared.deleteCard(id: id)
             updateCard(deletedCard, .delete)
             isPresented = false
         }
@@ -125,21 +117,23 @@ struct CardEditView: View {
     
     func createOrSaveCard() async {
         await tryOrAlert {
-            let method = isCreatingCard ? "POST" : "PUT"
-            let path = isCreatingCard ? "cards" : "cards/\(id)"
             let card = Card(
-                id: isCreatingCard ? nil : id,
+                id: id,
                 front: cleanString(front),
                 back: cleanString(back),
                 mainWords: cleanString(mainWords).split(usingRegex: "[ 、,]+"),
                 notes: cleanString(notes),
-                tags: cleanString(tags).split(usingRegex: " +"),
-                files: nil,
-                tts: true // TODO: I think this is used in creation for now, only
+                tags: cleanString(tags).split(usingRegex: "[ ,]+"),
+                files: [], // not used
+                searchText: "" // not used
             )
-            
-            let cardUpdated = try await CardsService.shared.call(method: method, path: path, data: card, returnType: Card.self)
-            updateCard(cardUpdated, isCreatingCard ? .create : .update)
+            if isCreatingCard {
+                let createdCard = try await CardsService.shared.create(card: card)
+                updateCard(createdCard, .create)
+            } else {
+                let updatedCard = try await CardsService.shared.update(card: card)
+                updateCard(updatedCard, .update)
+            }
             isPresented = false
         }
     }
@@ -148,7 +142,6 @@ struct CardEditView: View {
         do {
             try await action()
         } catch {
-            // Here we assume that alertMessage and isAlertPresented are accessible within this context
             alertMessage = "Error: \(error.localizedDescription)"
             isAlertPresented = true
         }
@@ -176,12 +169,7 @@ struct ActionButton: View {
     }
 }
 
-struct GptAnswer: Decodable {
+struct GptAnswer: Codable {
     let translation: String
-    let words: [String]
-    
-    private enum CodingKeys: String, CodingKey {
-        case translation = "translation"
-        case words = "words"
-    }
+    let mainWords: [String]
 }

@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  Flashcards
-//
-//  Created by Ferran Maylinch carrasco on 07.01.2024.
-//
-
 import SwiftUI
 
 
@@ -24,6 +17,7 @@ struct ContentView: View {
     @State private var search = ""
     @State private var filteredCards: [Card] = []
     @StateObject private var cardsModel = CardsModel()
+    @State private var cardsLoaded = false
     @StateObject private var showOptions = ShowOptions()
     @State private var isEditCardPresented = false
     
@@ -36,7 +30,7 @@ struct ContentView: View {
                 HStack {
                     Spacer()
                     let cardCount = search.isEmpty ? "\(filteredCards.count)" : "\(filteredCards.count) / \(cardsModel.cards.count)"
-                    Text(cardsModel.loaded ? "\(cardCount) cards" : "loading cards")
+                    Text(cardsLoaded ? "\(cardCount) cards" : "loading cards")
                         .foregroundColor(.gray)
                         .padding(.trailing, 25)
                 }
@@ -47,9 +41,7 @@ struct ContentView: View {
                 .searchable(text: $search)
                 .onChange(of: search, initial: false, filterCards)
                 .task {
-                    if !cardsModel.loaded {
-                        await loadCards(forceReload: false)
-                    }
+                    await loadCards(forceReload: false)
                 }
                 .navigationDestination(for: Card.self) { card in
                     CardDetailView(card: card) { (card, action) in
@@ -98,12 +90,15 @@ struct ContentView: View {
     }
     
     private func loadCards(forceReload: Bool) async {
+        if cardsLoaded && !forceReload {
+            return
+        }
         filteredCards = []
         do {
-            let loaded = try await cardsModel.fetch(forceReload: forceReload)
-            if loaded {
-                filterCards()
-            }
+            cardsLoaded = false
+            self.cardsModel.cards = try await CardsService.shared.getCards().reversed()
+            cardsLoaded = true
+            filterCards()
         } catch {
             filteredCards = [errorCard(error: error)]
         }
@@ -112,11 +107,11 @@ struct ContentView: View {
     private func filterCards() {
         if search.isEmpty {
             filteredCards = cardsModel.cards
-            return
-        }
-        let searchLower = search.lowercased()
-        filteredCards = cardsModel.cards.filter { card in
-            card.searchText.contains(searchLower)
+        } else {
+            let searchLower = search.lowercased()
+            filteredCards = cardsModel.cards.filter { card in
+                card.searchText.contains(searchLower)
+            }
         }
     }
 }
@@ -204,7 +199,7 @@ struct CardItemView: View {
                         .font(.system(size: 20, weight: .regular))
                         .foregroundColor(.purple.opacity(0.5))
                 }
-                if showOptions.showPlayButton && !card.files!.isEmpty {
+                if showOptions.showPlayButton && !card.files.isEmpty {
                     Image(systemName: "speaker.wave.2")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -212,7 +207,7 @@ struct CardItemView: View {
                         .padding(.vertical, 5)
                         .foregroundColor(.cyan)
                         .onTapGesture {
-                            CardsService.shared.playAudio(file: card.files!.randomElement()!)
+                            CardsService.shared.playAudio(file: card.files.randomElement()!)
                         }
                 }
             })
