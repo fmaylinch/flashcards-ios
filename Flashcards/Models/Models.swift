@@ -13,22 +13,17 @@ class CardsModel: ObservableObject {
     @Published var cards: [Card] = []
     @Published var loaded = false
     
-    func fetch(forceReload: Bool, completion: @escaping (Bool) -> Void) {
+    func fetch(forceReload: Bool) async throws -> Bool {
         if loaded && !forceReload {
-            completion(false)
-            return
+            return false
         }
         loaded = false
-        // TODO: organize API calls
-        api(method: "GET", path: "cards/list", returnType: CardsResponse.self) { result in
-            do {
-                self.cards = try result.get().cards.reversed() // reversed is from newest (I think), I could sort by updated
-            } catch {
-                self.cards = [errorCard(error: error)] // TODO: we return the error as a card, improve this
-            }
-            self.loaded = true
-            completion(true)
-        }
+        let cardsResponse = try await CardsService.shared.call(method: "GET", path: "cards/list", returnType: CardsResponse.self)
+        self.cards = cardsResponse.cards.reversed()
+        // self.cards = [errorCard(error: error)]
+        
+        self.loaded = true
+        return true
     }
     
     func updateCard(_ card: Card, updateAction: CardUpdateAction) {
@@ -66,13 +61,13 @@ struct CardsResponse: Decodable {
 
 struct Card: Encodable, Decodable, Identifiable, Hashable {
     
-    let id: String?
+    let id: String? // This is nil when creating the card
     let front: String
     let back: String
     let mainWords: [String]
     let notes: String
     let tags: [String]
-    let files: [String]? // TODO: This is nil when creating the card 
+    let files: [String]? // This is nil when creating the card 
     let tts: Bool
 
     var searchText: String {

@@ -36,18 +36,23 @@ struct CardEditView: View {
             HStack {
                 
                 ActionButton(imageName: "speaker.wave.2", isCallingApi: isCallingApiPlay) {
-                    if cleanString(front).isEmpty {
-                        return
-                    }
-                    // TODO: using messageCard, but actually we just need to set `front`
-                    let card = messageCard(front: front, back: back)
-                    isCallingApiPlay = true
-                    api(method: "POST", data: card, path: "cards/tts", returnType: Card.self) { result in
+                    Task {
+                        if cleanString(front).isEmpty {
+                            return
+                        }
+                        // TODO: using messageCard, but actually we just need to set `front`
+                        let card = messageCard(front: front, back: back)
+                        isCallingApiPlay = true
                         do {
-                            let file = try result.get().files![0]
-                            apiPlay(file: file)
+                            let testCard = try await CardsService.shared.call(
+                                method: "POST",
+                                data: card,
+                                path: "cards/tts",
+                                returnType: Card.self)
+                            let file = testCard.files![0]
+                            CardsService.shared.playAudio(file: file)
                         } catch {
-                            alertMessage = "Error: \(error)"
+                            alertMessage = "Error: \(error.localizedDescription)"
                             isAlertPresented = true
                         }
                         isCallingApiPlay = false
@@ -61,13 +66,14 @@ struct CardEditView: View {
                         }
                         isCallingOpenAI = true
                         do {
-                            let message = "From a Japanese sentence, I want the English translation and the main words in Japanese (omitting particles and markers).\nThe answer must be in JSON format, with fields \"translation\" and \"words\".\nHere's the Japanese sentence: \(front)"
+                            let message = "From a Japanese sentence, I want the English translation and the main words in Japanese.\nThe answer must be in JSON format, with fields \"translation\" and \"words\".\nFor the 'words', only include the most important words of the sentence, do not include particles, markers, or words that appear frequently in Japanese sentences. \nHere's the Japanese sentence: \(front)"
                             let json = try await OpenAIService().send(message: message)
                             let gptAnswer = try JSONDecoder().decode(GptAnswer.self, from: json.data(using: .utf8)!)
                             back = gptAnswer.translation
                             mainWords = gptAnswer.words.joined(separator: " ")
                         } catch {
-                            notes = error.localizedDescription
+                            alertMessage = "Error: \(error.localizedDescription)"
+                            isAlertPresented = true
                         }
                         isCallingOpenAI = false
                     }
@@ -99,13 +105,13 @@ struct CardEditView: View {
                                  isPresented: $isDeleteConfirmationPresented,
                                  titleVisibility: .visible) {
                 Button("Delete", role: .destructive) {
-                    api(method: "DELETE", path: "cards/\(id)", returnType: Card.self) { result in
+                    Task {
                         do {
-                            let deletedCard = try result.get()
+                            let deletedCard = try await CardsService.shared.call(method: "DELETE", path: "cards/\(id)", returnType: Card.self)
                             updateCard(deletedCard, .delete)
                             isPresented = false
                         } catch {
-                            alertMessage = "Error: \(error)"
+                            alertMessage = "Error: \(error.localizedDescription)"
                             isAlertPresented = true
                         }
                     }
@@ -118,27 +124,26 @@ struct CardEditView: View {
             
         // TODO: we could pass callingApi to dim/disable the button
         CustomButton(text: isCreatingCard ? "Create Card" : "Save Card") {
-            
-            let path = isCreatingCard ? "cards" : "cards/\(id)"
-            let method = isCreatingCard ? "POST" : "PUT"
-            let card = Card(
-                id: isCreatingCard ? nil : id,
-                front: cleanString(front),
-                back: cleanString(back),
-                mainWords: cleanString(mainWords).split(usingRegex: " +"),
-                notes: cleanString(notes),
-                tags: cleanString(tags).split(usingRegex: " +"),
-                files: nil,
-                tts: true // TODO: I think this is used in creation for now, only
-            )
-            
-            api(method: method, data: card, path: path, returnType: Card.self) { result in
+            Task {
+                let path = isCreatingCard ? "cards" : "cards/\(id)"
+                let method = isCreatingCard ? "POST" : "PUT"
+                let card = Card(
+                    id: isCreatingCard ? nil : id,
+                    front: cleanString(front),
+                    back: cleanString(back),
+                    mainWords: cleanString(mainWords).split(usingRegex: " +"),
+                    notes: cleanString(notes),
+                    tags: cleanString(tags).split(usingRegex: " +"),
+                    files: nil,
+                    tts: true // TODO: I think this is used in creation for now, only
+                )
+                
                 do {
-                    let card = try result.get()
+                    let card = try await CardsService.shared.call(method: method, data: card, path: path, returnType: Card.self)
                     updateCard(card, isCreatingCard ? .create : .update)
                     isPresented = false
                 } catch {
-                    alertMessage = "Error: \(error)"
+                    alertMessage = "Error: \(error.localizedDescription)"
                     isAlertPresented = true
                 }
             }

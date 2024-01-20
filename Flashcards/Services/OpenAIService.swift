@@ -26,7 +26,7 @@ class OpenAIService {
         let payload = GPTChatPayload(model: "gpt-4", messages: [userMessage])
         request.httpBody = try JSONEncoder().encode(payload)
         
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, _) = try await URLSession.shared.data(for: request)
         let chatResponse = try JSONDecoder().decode(GPTChatResponse.self, from: data)
         return chatResponse.choices[0].message.content
     }

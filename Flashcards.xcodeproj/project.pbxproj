@@ -11,7 +11,7 @@
 		532BBE1C2B532C5A00C4DA73 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE1B2B532C5A00C4DA73 /* Constants.swift */; };
 		532BBE1F2B54373D00C4DA73 /* CardEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE1E2B54373D00C4DA73 /* CardEditView.swift */; };
 		532BBE212B54382F00C4DA73 /* UtilViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE202B54382F00C4DA73 /* UtilViews.swift */; };
-		532BBE232B543ABE00C4DA73 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE222B543ABE00C4DA73 /* Api.swift */; };
+		532BBE232B543ABE00C4DA73 /* CardsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE222B543ABE00C4DA73 /* CardsService.swift */; };
 		532BBE252B54591E00C4DA73 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE242B54591E00C4DA73 /* Util.swift */; };
 		533C02DE2B5AFD58007ED202 /* OpenAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533C02DD2B5AFD58007ED202 /* OpenAIService.swift */; };
 		536D35552B55D23E000E9E71 /* CardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536D35542B55D23E000E9E71 /* CardDetailView.swift */; };
@@ -27,7 +27,7 @@
 		532BBE1B2B532C5A00C4DA73 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		532BBE1E2B54373D00C4DA73 /* CardEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardEditView.swift; sourceTree = "<group>"; };
 		532BBE202B54382F00C4DA73 /* UtilViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilViews.swift; sourceTree = "<group>"; };
-		532BBE222B543ABE00C4DA73 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
+		532BBE222B543ABE00C4DA73 /* CardsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsService.swift; sourceTree = "<group>"; };
 		532BBE242B54591E00C4DA73 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		533C02DD2B5AFD58007ED202 /* OpenAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIService.swift; sourceTree = "<group>"; };
 		536D35542B55D23E000E9E71 /* CardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailView.swift; sourceTree = "<group>"; };
@@ -72,19 +72,15 @@
 		53BC45042B4B359F00BD4710 /* Flashcards */ = {
 			isa = PBXGroup;
 			children = (
-				532BBE222B543ABE00C4DA73 /* Api.swift */,
+				53DBDE4E2B5C0A550005D8C5 /* Models */,
+				53DBDE4D2B5C0A370005D8C5 /* Views */,
+				53DBDE4C2B5C0A240005D8C5 /* Services */,
 				53BC45092B4B35A000BD4710 /* Assets.xcassets */,
 				532BBE192B532B7300C4DA73 /* AudioPlayerManager.swift */,
-				536D35542B55D23E000E9E71 /* CardDetailView.swift */,
-				532BBE1E2B54373D00C4DA73 /* CardEditView.swift */,
 				532BBE1B2B532C5A00C4DA73 /* Constants.swift */,
-				53BC45072B4B359F00BD4710 /* ContentView.swift */,
 				53BC45052B4B359F00BD4710 /* FlashcardsApp.swift */,
 				53FF07E32B4C25F0005CB29C /* Info.plist */,
-				53FF07E12B4C18CC005CB29C /* Models.swift */,
-				533C02DD2B5AFD58007ED202 /* OpenAIService.swift */,
 				53BC450B2B4B35A000BD4710 /* Preview Content */,
-				532BBE202B54382F00C4DA73 /* UtilViews.swift */,
 				532BBE242B54591E00C4DA73 /* Util.swift */,
 			);
 			path = Flashcards;
@@ -96,6 +92,34 @@
 				53BC450C2B4B35A000BD4710 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		53DBDE4C2B5C0A240005D8C5 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				532BBE222B543ABE00C4DA73 /* CardsService.swift */,
+				533C02DD2B5AFD58007ED202 /* OpenAIService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		53DBDE4D2B5C0A370005D8C5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				536D35542B55D23E000E9E71 /* CardDetailView.swift */,
+				532BBE1E2B54373D00C4DA73 /* CardEditView.swift */,
+				53BC45072B4B359F00BD4710 /* ContentView.swift */,
+				532BBE202B54382F00C4DA73 /* UtilViews.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		53DBDE4E2B5C0A550005D8C5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				53FF07E12B4C18CC005CB29C /* Models.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -177,7 +201,7 @@
 				533C02DE2B5AFD58007ED202 /* OpenAIService.swift in Sources */,
 				532BBE1F2B54373D00C4DA73 /* CardEditView.swift in Sources */,
 				536D35552B55D23E000E9E71 /* CardDetailView.swift in Sources */,
-				532BBE232B543ABE00C4DA73 /* Api.swift in Sources */,
+				532BBE232B543ABE00C4DA73 /* CardsService.swift in Sources */,
 				532BBE1C2B532C5A00C4DA73 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

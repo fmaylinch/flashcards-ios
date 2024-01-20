@@ -42,7 +42,7 @@ struct ContentView: View {
                 .onChange(of: search, initial: false, filterCards)
                 .task {
                     if !cardsModel.loaded {
-                        loadCards(forceReload: false)
+                        await loadCards(forceReload: false)
                     }
                 }
                 .navigationDestination(for: Card.self) { card in
@@ -62,7 +62,9 @@ struct ContentView: View {
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
-                            loadCards(forceReload: true)
+                            Task {
+                                await loadCards(forceReload: true)
+                            }
                         } label: {
                             ToolbarIcon(systemName: "arrow.circlepath")
                         }
@@ -89,12 +91,15 @@ struct ContentView: View {
         }
     }
     
-    private func loadCards(forceReload: Bool) {
+    private func loadCards(forceReload: Bool) async {
         filteredCards = []
-        cardsModel.fetch(forceReload: forceReload) { loaded in
+        do {
+            let loaded = try await cardsModel.fetch(forceReload: forceReload)
             if loaded {
                 filterCards()
             }
+        } catch {
+            filteredCards = [errorCard(error: error)]
         }
     }
     
@@ -201,7 +206,7 @@ struct CardItemView: View {
                         .padding(.vertical, 5)
                         .foregroundColor(.cyan)
                         .onTapGesture {
-                            apiPlay(file: card.files!.randomElement()!)
+                            CardsService.shared.playAudio(file: card.files!.randomElement()!)
                         }
                 }
             })
