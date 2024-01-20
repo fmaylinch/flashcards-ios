@@ -3,7 +3,6 @@ import SwiftUI
 struct CardEditView: View {
     
     @Binding var isPresented: Bool
-    var updateCard: (Card, CardUpdateAction) -> Void
 
     var id: String = ""
     var isCreatingCard: Bool {
@@ -14,7 +13,9 @@ struct CardEditView: View {
     @State var back: String = ""
     @State var notes: String = ""
     @State var tags: String = ""
-    
+
+    var onUpdateCard: (Card, CardUpdateAction) async -> Void
+
     @State private var isCallingApiPlay = false
     @State private var isCallingOpenAI = false
     @State private var isAlertPresented = false
@@ -110,7 +111,7 @@ struct CardEditView: View {
     func deleteCard() async {
         await tryOrAlert {
             let deletedCard = try await CardsService.shared.deleteCard(id: id)
-            updateCard(deletedCard, .delete)
+            await onUpdateCard(deletedCard, .delete)
             isPresented = false
         }
     }
@@ -129,10 +130,10 @@ struct CardEditView: View {
             )
             if isCreatingCard {
                 let createdCard = try await CardsService.shared.create(card: card)
-                updateCard(createdCard, .create)
+                await onUpdateCard(createdCard, .create)
             } else {
                 let updatedCard = try await CardsService.shared.update(card: card)
-                updateCard(updatedCard, .update)
+                await onUpdateCard(updatedCard, .update)
             }
             isPresented = false
         }

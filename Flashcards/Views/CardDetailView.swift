@@ -3,7 +3,7 @@ import SwiftUI
 struct CardDetailView: View {
     
     @State var card: Card
-    var updateCard: (Card, CardUpdateAction) -> Void
+    var onUpdateCard: (Card, CardUpdateAction) async -> Void
     @State private var isCardDeleted: Bool = false
 
     @State private var isEditCardPresented = false
@@ -55,18 +55,17 @@ struct CardDetailView: View {
         }.sheet(isPresented: $isEditCardPresented) {
             CardEditView(
                 isPresented: $isEditCardPresented,
-                updateCard: { (card, action) in
-                    self.card = card
-                    updateCard(card, action)
-                    isCardDeleted = action == .delete
-                },
                 id: isCardDeleted ? "" : card.id,
                 front: card.front,
                 mainWords: card.mainWords.joined(separator: "、"),
                 back: card.back,
                 notes: card.notes,
                 tags: card.tags.joined(separator: " ")
-            )
+            ) { (card, action) in
+                self.card = card
+                await onUpdateCard(card, action)
+                isCardDeleted = action == .delete
+            }
         }
     }
 }

@@ -45,8 +45,10 @@ struct ContentView: View {
                 }
                 .navigationDestination(for: Card.self) { card in
                     CardDetailView(card: card) { (card, action) in
-                        cardsModel.updateCard(card, updateAction: action)
-                        filterCards()
+                        DispatchQueue.main.async { // TODO: where to put these main.async ?
+                            cardsModel.updateCard(card, updateAction: action)
+                            filterCards()
+                        }
                     }
                 }
                 .toolbar {
@@ -81,8 +83,10 @@ struct ContentView: View {
                     // When coming from CardDetailView (after editing the card),
                     //   the list is updated because .task is called.
                     CardEditView(isPresented: $isEditCardPresented) { (card, action) in
-                        cardsModel.updateCard(card, updateAction: action)
-                        filterCards()
+                        DispatchQueue.main.async {
+                            cardsModel.updateCard(card, updateAction: action)
+                            filterCards()
+                        }
                     }
                 }
             }
@@ -96,9 +100,12 @@ struct ContentView: View {
         filteredCards = []
         do {
             cardsLoaded = false
-            self.cardsModel.cards = try await CardsService.shared.getCards().reversed()
-            cardsLoaded = true
-            filterCards()
+            let cards = try await CardsService.shared.getCards()
+            DispatchQueue.main.async {
+                self.cardsModel.cards = cards.reversed()
+                cardsLoaded = true
+                filterCards()
+            }
         } catch {
             filteredCards = [errorCard(error: error)]
         }
