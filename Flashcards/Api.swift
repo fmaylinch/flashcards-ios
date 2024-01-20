@@ -64,8 +64,3 @@ func api<T>(method: String,
     
     task.resume()
 }
-
-
-enum ApiError: Error {
-    case error(String)
-}

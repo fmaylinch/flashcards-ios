@@ -22,7 +22,8 @@ struct CardEditView: View {
     @State var notes: String = ""
     @State var tags: String = ""
     
-    @State private var callingApi = false
+    @State private var isCallingApiPlay = false
+    @State private var isCallingOpenAI = false
     @State private var isAlertPresented = false
     @State private var isDeleteConfirmationPresented = false
     @State private var alertMessage = ""
@@ -31,21 +32,23 @@ struct CardEditView: View {
         
         Form {
             MultilineTextField(text: $front, placeholder: "Japanese", color: .primary)
-            ZStack {
+            
+            HStack {
+                
                 Image(systemName: "speaker.wave.2")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 30, height: 30)
-                    .padding(.vertical, 5)
                     .foregroundColor(.cyan)
-                    .opacity(callingApi ? 0.3 : 1)
+                    .opacity(isCallingApiPlay ? 0.3 : 1)
+                    .padding(.trailing, 20)
                     .onTapGesture {
                         if cleanString(front).isEmpty {
                             return
                         }
                         // TODO: using messageCard, but actually we just need to set `front`
                         let card = messageCard(front: front, back: back)
-                        callingApi = true
+                        isCallingApiPlay = true
                         api(method: "POST", data: card, path: "cards/tts", returnType: Card.self) { result in
                             do {
                                 let file = try result.get().files![0]
@@ -54,10 +57,40 @@ struct CardEditView: View {
                                 alertMessage = "Error: \(error)"
                                 isAlertPresented = true
                             }
-                            callingApi = false
+                            isCallingApiPlay = false
                         }
+
+                    }
+
+                Image(systemName: "gear")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 30, height: 30)
+                    .padding(.trailing, 20)
+                    .foregroundColor(.cyan)
+                    .opacity(isCallingOpenAI ? 0.3 : 1)
+                    .onTapGesture {
+                        Task {
+                            if cleanString(front).isEmpty {
+                                return
+                            }
+                            isCallingOpenAI = true
+                            do {
+                                let message = "From a Japanese sentence, I want the English translation and the main words in Japanese (omitting particles and markers).\nThe answer must be in JSON format, with fields \"translation\" and \"words\".\nHere's the Japanese sentence: \(front)"
+                                let json = try await OpenAIService().send(message: message)
+                                let gptAnswer = try JSONDecoder().decode(GptAnswer.self, from: json.data(using: .utf8)!)
+                                back = gptAnswer.translation
+                                mainWords = gptAnswer.words.joined(separator: " ")
+                            } catch {
+                                notes = error.localizedDescription
+                            }
+                            isCallingOpenAI = false
+                        }
+
                     }
             }
+            .padding(.vertical, 5)
+
             MultilineTextField(text: $mainWords, placeholder: "Main words", color: .primary.opacity(0.7))
             MultilineTextField(text: $back, placeholder: "English", color: .orange.opacity(0.9))
             MultilineTextField(text: $notes, placeholder: "Notes", color: .primary.opacity(0.7))
@@ -81,8 +114,6 @@ struct CardEditView: View {
                                  isPresented: $isDeleteConfirmationPresented,
                                  titleVisibility: .visible) {
                 Button("Delete", role: .destructive) {
-                    callingApi = true
-                    
                     api(method: "DELETE", path: "cards/\(id)", returnType: Card.self) { result in
                         do {
                             let deletedCard = try result.get()
@@ -92,7 +123,6 @@ struct CardEditView: View {
                             alertMessage = "Error: \(error)"
                             isAlertPresented = true
                         }
-                        callingApi = false
                     }
                 }
                 Button("Cancel", role: .cancel) {
@@ -118,7 +148,6 @@ struct CardEditView: View {
             )
             
             api(method: method, data: card, path: path, returnType: Card.self) { result in
-                callingApi = true
                 do {
                     let card = try result.get()
                     updateCard(card, isCreatingCard ? .create : .update)
@@ -127,7 +156,6 @@ struct CardEditView: View {
                     alertMessage = "Error: \(error)"
                     isAlertPresented = true
                 }
-                callingApi = false
             }
         }
     }
@@ -135,4 +163,14 @@ struct CardEditView: View {
 
 func cleanString(_ str: String) -> String {
     return str.trimmingCharacters(in: .whitespacesAndNewlines)
+}
+
+struct GptAnswer: Decodable {
+    let translation: String
+    let words: [String]
+    
+    private enum CodingKeys: String, CodingKey {
+        case translation = "translation"
+        case words = "words"
+    }
 }

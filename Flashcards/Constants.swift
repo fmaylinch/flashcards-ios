@@ -1,15 +1,13 @@
-//
-//  Keys.swift
-//  Flashcards
-//
-//  Created by Ferran Maylinch carrasco on 13.01.2024.
-//
 
 import Foundation
 
 class Constants {
     
-    static let baseUrl = "http://158.160.43.18:3001"
+    static let baseUrl = "http://localhost:3000"
+
+    static let chatCompletionsUrl = "https://api.openai.com/v1/chat/completions" // original is blocked
 
     static let testToken = "xxx"
+    
+    static let openAiToken = "xxx"
 }

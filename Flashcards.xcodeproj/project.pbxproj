@@ -13,6 +13,7 @@
 		532BBE212B54382F00C4DA73 /* UtilViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE202B54382F00C4DA73 /* UtilViews.swift */; };
 		532BBE232B543ABE00C4DA73 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE222B543ABE00C4DA73 /* Api.swift */; };
 		532BBE252B54591E00C4DA73 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532BBE242B54591E00C4DA73 /* Util.swift */; };
+		533C02DE2B5AFD58007ED202 /* OpenAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533C02DD2B5AFD58007ED202 /* OpenAIService.swift */; };
 		536D35552B55D23E000E9E71 /* CardDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536D35542B55D23E000E9E71 /* CardDetailView.swift */; };
 		53BC45062B4B359F00BD4710 /* FlashcardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BC45052B4B359F00BD4710 /* FlashcardsApp.swift */; };
 		53BC45082B4B359F00BD4710 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BC45072B4B359F00BD4710 /* ContentView.swift */; };
@@ -28,6 +29,7 @@
 		532BBE202B54382F00C4DA73 /* UtilViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilViews.swift; sourceTree = "<group>"; };
 		532BBE222B543ABE00C4DA73 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
 		532BBE242B54591E00C4DA73 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
+		533C02DD2B5AFD58007ED202 /* OpenAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIService.swift; sourceTree = "<group>"; };
 		536D35542B55D23E000E9E71 /* CardDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailView.swift; sourceTree = "<group>"; };
 		53BC45022B4B359F00BD4710 /* Flashcards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Flashcards.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53BC45052B4B359F00BD4710 /* FlashcardsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardsApp.swift; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 				53BC45052B4B359F00BD4710 /* FlashcardsApp.swift */,
 				53FF07E32B4C25F0005CB29C /* Info.plist */,
 				53FF07E12B4C18CC005CB29C /* Models.swift */,
+				533C02DD2B5AFD58007ED202 /* OpenAIService.swift */,
 				53BC450B2B4B35A000BD4710 /* Preview Content */,
 				532BBE202B54382F00C4DA73 /* UtilViews.swift */,
 				532BBE242B54591E00C4DA73 /* Util.swift */,
@@ -171,6 +174,7 @@
 				53BC45082B4B359F00BD4710 /* ContentView.swift in Sources */,
 				532BBE212B54382F00C4DA73 /* UtilViews.swift in Sources */,
 				53BC45062B4B359F00BD4710 /* FlashcardsApp.swift in Sources */,
+				533C02DE2B5AFD58007ED202 /* OpenAIService.swift in Sources */,
 				532BBE1F2B54373D00C4DA73 /* CardEditView.swift in Sources */,
 				536D35552B55D23E000E9E71 /* CardDetailView.swift in Sources */,
 				532BBE232B543ABE00C4DA73 /* Api.swift in Sources */,

@@ -41,3 +41,6 @@ extension String {
     }
 }
 
+enum ApiError: Error {
+    case error(String)
+}
