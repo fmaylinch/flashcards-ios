@@ -2,8 +2,8 @@ import SwiftUI
 
 
 #Preview {
-    // ContentView().preferredColorScheme(.dark)
-    TestView().preferredColorScheme(.dark)
+    ContentView().preferredColorScheme(.dark)
+    //TestView().preferredColorScheme(.dark)
 }
 
 struct TestView: View {
@@ -14,6 +14,41 @@ struct TestView: View {
 
 struct ContentView: View {
     
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .center) {
+                NavigationLink {
+                    ListView()
+                } label: {
+                    Image(systemName: "list.bullet")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 50, height: 50)
+                        .foregroundColor(.cyan)
+                }
+                .padding(.bottom, 50)
+                NavigationLink {
+                    OptionsView()
+                } label: {
+                    Image(systemName: "gearshape")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 50, height: 50)
+                        .foregroundColor(.cyan)
+                }
+            }
+        }
+    }
+}
+
+struct OptionsView: View {
+    var body: some View {
+        Text("TODO: Options view")
+    }
+}
+
+struct ListView: View {
+    
     @State private var search = ""
     @State private var filteredCards: [Card] = []
     @StateObject private var cardsModel = CardsModel()
@@ -22,71 +57,71 @@ struct ContentView: View {
     @State private var isEditCardPresented = false
     
     var body: some View {
-        NavigationStack {
-            VStack {
-                ModeButtons(showOptions: showOptions)
-                    .padding(.horizontal, 40)
-                
-                HStack {
-                    Spacer()
-                    let cardCount = search.isEmpty ? "\(filteredCards.count)" : "\(filteredCards.count) / \(cardsModel.cards.count)"
-                    Text(cardsLoaded ? "\(cardCount) cards" : "loading cards")
-                        .foregroundColor(.gray)
-                        .padding(.trailing, 25)
-                }
-                                
-                List(filteredCards) { card in
-                    CardItemView(card: card, showOptions: showOptions)
-                }
-                .searchable(text: $search)
-                .onChange(of: search, initial: false, filterCards)
-                .task {
-                    await loadCards(forceReload: false)
-                }
-                .navigationDestination(for: Card.self) { card in
+        VStack {
+            ModeButtons(showOptions: showOptions)
+                .padding(.horizontal, 40)
+            
+            HStack {
+                Spacer()
+                let cardCount = search.isEmpty ? "\(filteredCards.count)" : "\(filteredCards.count) / \(cardsModel.cards.count)"
+                Text(cardsLoaded ? "\(cardCount) cards" : "loading cards")
+                    .foregroundColor(.gray)
+                    .padding(.trailing, 25)
+            }
+                            
+            List(filteredCards) { card in
+                NavigationLink {
                     CardDetailView(card: card) { (card, action) in
                         DispatchQueue.main.async { // TODO: where to put these main.async ?
                             cardsModel.updateCard(card, updateAction: action)
                             filterCards()
                         }
                     }
+
+                } label: {
+                    CardItemView(card: card, showOptions: showOptions)
                 }
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            cardsModel.cards.shuffle()
-                            filterCards()
-                        } label: {
-                            ToolbarIcon(systemName: "shuffle")
-                        }
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            Task {
-                                await loadCards(forceReload: true)
-                            }
-                        } label: {
-                            ToolbarIcon(systemName: "arrow.circlepath")
-                        }
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            isEditCardPresented.toggle()
-                        } label: {
-                            ToolbarIcon(systemName: "plus")
-                        }
+            }
+            .searchable(text: $search)
+            .onChange(of: search, initial: false, filterCards)
+            .task {
+                await loadCards(forceReload: false)
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        cardsModel.cards.shuffle()
+                        filterCards()
+                    } label: {
+                        ToolbarIcon(systemName: "shuffle")
                     }
                 }
-                .sheet(isPresented: $isEditCardPresented) {
-                    // TODO: when coming from this sheet, the List is not updated
-                    //   because the .task is not called.
-                    // When coming from CardDetailView (after editing the card),
-                    //   the list is updated because .task is called.
-                    CardEditView(isPresented: $isEditCardPresented) { (card, action) in
-                        DispatchQueue.main.async {
-                            cardsModel.updateCard(card, updateAction: action)
-                            filterCards()
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        Task {
+                            await loadCards(forceReload: true)
                         }
+                    } label: {
+                        ToolbarIcon(systemName: "arrow.circlepath")
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        isEditCardPresented.toggle()
+                    } label: {
+                        ToolbarIcon(systemName: "plus")
+                    }
+                }
+            }
+            .sheet(isPresented: $isEditCardPresented) {
+                // TODO: when coming from this sheet, the List is not updated
+                //   because the .task is not called.
+                // When coming from CardDetailView (after editing the card),
+                //   the list is updated because .task is called.
+                CardEditView(isPresented: $isEditCardPresented) { (card, action) in
+                    DispatchQueue.main.async {
+                        cardsModel.updateCard(card, updateAction: action)
+                        filterCards()
                     }
                 }
             }

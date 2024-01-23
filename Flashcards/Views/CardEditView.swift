@@ -16,8 +16,9 @@ struct CardEditView: View {
 
     var onUpdateCard: (Card, CardUpdateAction) async -> Void
 
-    @State private var isCallingApiPlay = false
-    @State private var isCallingOpenAI = false
+    @State private var isCallingPlay = false
+    @State private var isCallingAnalyze = false
+    @State private var isCallingAlter = false
     @State private var isAlertPresented = false
     @State private var isDeleteConfirmationPresented = false
     @State private var alertMessage = ""
@@ -28,14 +29,19 @@ struct CardEditView: View {
             MultilineTextField(text: $front, placeholder: "Japanese", color: .primary)
             
             HStack {
-                ActionButton(imageName: "speaker.wave.2", isCallingApi: isCallingApiPlay) {
+                ActionButton(imageName: "speaker.wave.2", isCallingApi: isCallingPlay) {
                     Task {
                         await playAudio(text: front)
                     }
                 }
-                ActionButton(imageName: "gear", isCallingApi: isCallingOpenAI) {
+                ActionButton(imageName: "gear", isCallingApi: isCallingAnalyze) {
                     Task {
                         await analyze(text: front)
+                    }
+                }
+                ActionButton(imageName: "wand.and.stars", isCallingApi: isCallingAlter) {
+                    Task {
+                        await alterSentence(text: front)
                     }
                 }
             }
@@ -87,27 +93,42 @@ struct CardEditView: View {
         if cleanString(text).isEmpty {
             return
         }
-        isCallingApiPlay = true
+        isCallingPlay = true
         await tryOrAlert {
             try await CardsService.shared.generateAndPlayAudio(text: front)
         }
-        isCallingApiPlay = false
+        isCallingPlay = false
     }
     
     func analyze(text: String) async {
         if cleanString(text).isEmpty {
             return
         }
-        isCallingOpenAI = true
+        isCallingAnalyze = true
         await tryOrAlert {
             let prompt = "From a Japanese sentence, I want the English translation and the main words in Japanese.\nThe answer must be in JSON format, with fields \"translation\" and \"mainWords\".\nFor the 'mainWords', only include the most important words of the sentence, do not include particles, markers, or words that appear frequently in Japanese sentences. \nHere's the Japanese sentence: \(text)"
-            let gptAnswer = try await OpenAIService().send(prompt: prompt, answerType: GptAnswer.self)
-            back = gptAnswer.translation
-            mainWords = gptAnswer.mainWords.joined(separator: "、")
+            let gptAnalyzeAnswer = try await OpenAIService().send(prompt: prompt, answerType: GptAnalyzeAnswer.self)
+            back = gptAnalyzeAnswer.translation
+            mainWords = gptAnalyzeAnswer.mainWords.joined(separator: "、")
         }
-        isCallingOpenAI = false
+        isCallingAnalyze = false
     }
-    
+
+    func alterSentence(text: String) async {
+        if cleanString(text).isEmpty {
+            return
+        }
+        isCallingAlter = true
+        await tryOrAlert {
+            let prompt = "I will give you a Japanese sentence. Give me a modified version of this sentence, changing some parts of it, for example words, verb, tense, etc. Answer in JSON format with field \"phrase\". The Japanese sentence is: \(text)"
+            // TODO: hack to send temperature through the notes
+            let temperature = Double(notes) ?? 1.5
+            let gptAlterAnswer = try await OpenAIService().send(prompt: prompt, temperature: temperature, answerType: GptAlterAnswer.self)
+            front = gptAlterAnswer.phrase
+        }
+        isCallingAlter = false
+    }
+
     func deleteCard() async {
         await tryOrAlert {
             let deletedCard = try await CardsService.shared.deleteCard(id: id)
@@ -170,7 +191,11 @@ struct ActionButton: View {
     }
 }
 
-struct GptAnswer: Codable {
+struct GptAnalyzeAnswer: Codable {
     let translation: String
     let mainWords: [String]
+}
+
+struct GptAlterAnswer: Codable {
+    let phrase: String
 }
