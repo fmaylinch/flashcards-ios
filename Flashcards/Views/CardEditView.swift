@@ -120,10 +120,19 @@ struct CardEditView: View {
         }
         isCallingAlter = true
         await tryOrAlert {
-            let prompt = "I will give you a Japanese sentence. Give me a modified version of this sentence, changing some parts of it, for example words, verb, tense, etc. Answer in JSON format with field \"phrase\". The Japanese sentence is: \(text)"
-            // TODO: hack to send temperature through the notes
-            let temperature = Double(notes) ?? 1.5
-            let gptAlterAnswer = try await OpenAIService().send(prompt: prompt, temperature: temperature, answerType: GptAlterAnswer.self)
+            var prompt = "I will give you a Japanese sentence. Give me a modified version of this sentence, changing some parts of it, for example words, verb, tense, etc. Answer in JSON format with field \"phrase\". The Japanese sentence is: \(text)"
+            var temperature = 1.5
+            let prefix = "gpt "
+            if notes.hasPrefix(prefix) {
+                let instructions = notes.dropFirst(prefix.count)
+                prompt = "I will give you a Japanese sentence, and you have do the following: \(instructions). Answer in JSON format with the answer in the field \"phrase\". The Japanese sentence is: \(text)"
+                temperature = 1
+            }
+            let gptAlterAnswer = try await OpenAIService().send(
+                prompt: prompt,
+                temperature: temperature,
+                answerType: GptAlterAnswer.self)
+            
             front = gptAlterAnswer.phrase
         }
         isCallingAlter = false
