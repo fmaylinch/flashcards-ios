@@ -84,10 +84,7 @@ struct MainTextView: View {
     let mainWords: [String]
     
     var body: some View {
-        //let mainWords = ["今日", "天気", "公園", "行きましょ:行く"]
-        //let text = "今日はいい天気ですね。公園に行きましょか？"
-        let wordsAndLinks = mainWords.isEmpty ? [text] : mainWords // by default, the whole text is a clickable term
-        let mainTerms = mapToTerms(wordAndLinks: wordsAndLinks)
+        let mainTerms = mapToTerms(wordAndLinks: calculateWordsAndLinks())
         let terms = split(text: text, mainTerms: mainTerms)
         let lines = split(terms: terms, maxChars: 11)
 
@@ -109,6 +106,14 @@ struct MainTextView: View {
                 }
             }
         }
+    }
+    
+    func calculateWordsAndLinks() -> [String] {
+        if !mainWords.isEmpty {
+            return mainWords
+        }
+        // By default, detect words separated by commas and dots
+        return text.components(separatedBy: CharacterSet(charactersIn: "、。")).filter { !$0.isEmpty }
     }
 }
 
