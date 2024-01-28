@@ -87,6 +87,8 @@ struct MainTextView: View {
         let mainTerms = mapToTerms(wordAndLinks: calculateWordsAndLinks())
         let terms = split(text: text, mainTerms: mainTerms)
         let lines = split(terms: terms, maxChars: 11)
+        let fontSize: CGFloat = 28
+        let paddingForPunctuation = fontSize * 0.4 // it looks like the usual spacing
 
         VStack {
             ForEach(lines, id: \.self) { line in
@@ -95,12 +97,15 @@ struct MainTextView: View {
                         if let link = term.link {
                             Link(destination: URL(string: "https://nihongo-app.com/dictionary/word/\(link)")!) {
                                 Text(term.word)
-                                    .font(.system(size: 28, weight: .regular))
+                                    .font(.system(size: fontSize, weight: .regular))
                                     .foregroundColor(.cyan)
                             }
                         } else {
+                            // Japanese punctuation characters don't have the usual trailing padding when they're the last character
+                            let endsInPunctuation = ["、", "。"].contains(term.word.last)
                             Text(term.word)
-                                .font(.system(size: 28, weight: .regular))
+                                .font(.system(size: fontSize, weight: .regular))
+                                .padding(.trailing, endsInPunctuation ? paddingForPunctuation : 0)
                         }
                     }
                 }
@@ -147,7 +152,10 @@ func split(text: String, mainTerms: [Term]) -> [Term] {
             currentIndex = separatorRange.upperBound
         }
     }
-    result.append(Term(word: String(text[currentIndex..<text.endIndex]), link: nil)) // remaining text
+    let remainingText = text[currentIndex..<text.endIndex]
+    if !remainingText.isEmpty {
+        result.append(Term(word: String(remainingText), link: nil))
+    }
     //print("Split terms: \(result)")
     return result
 }
