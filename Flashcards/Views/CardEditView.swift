@@ -34,7 +34,7 @@ struct CardEditView: View {
                         await playAudio(text: front)
                     }
                 }
-                ActionButton(imageName: "gear", isCallingApi: isCallingAnalyze) {
+                ActionButton(imageName: "arrowshape.down", isCallingApi: isCallingAnalyze) {
                     Task {
                         await analyze(text: front)
                     }
@@ -47,8 +47,8 @@ struct CardEditView: View {
             }
             .padding(.vertical, 5)
 
-            MultilineTextField(text: $mainWords, placeholder: "Main words", color: .primary.opacity(0.7))
             MultilineTextField(text: $back, placeholder: "English", color: .orange.opacity(0.9))
+            MultilineTextField(text: $mainWords, placeholder: "Main words", color: .primary.opacity(0.7))
             MultilineTextField(text: $notes, placeholder: "Notes", color: .primary.opacity(0.7))
             
             TextField("Tags", text: $tags)
@@ -115,19 +115,32 @@ struct CardEditView: View {
     }
 
     func alterSentence(text: String) async {
-        if cleanString(text).isEmpty {
-            return
-        }
         isCallingAlter = true
         await tryOrAlert {
-            var prompt = "I will give you a Japanese sentence. Give me a modified version of this sentence, changing some parts of it, for example words, verb, tense, etc. Answer in JSON format with field \"phrase\". The Japanese sentence is: \(text)"
-            var temperature = 1.5
-            let prefix = "gpt "
-            if notes.hasPrefix(prefix) {
-                let instructions = notes.dropFirst(prefix.count)
-                prompt = "I will give you a Japanese sentence, and you have do the following: \(instructions). Answer in JSON format with the answer in the field \"phrase\". The Japanese sentence is: \(text)"
-                temperature = 1
+            let prompt: String
+            var temperature: Double? = nil
+            
+            // Option for custom instructions
+            let gptPrefix = "gpt "
+            if notes.hasPrefix(gptPrefix) {
+                var instructions = notes.dropFirst(gptPrefix.count)
+                // Temperature might be indicated like this: "gpt 2.0 <instructions>"
+                if let customTemperature = Double(instructions.prefix(3)) {
+                    temperature = customTemperature
+                    instructions = instructions.dropFirst(4)
+                }
+                if text.isEmpty {
+                    prompt = "In Japanese, \(instructions). Answer in JSON format with the answer in the field \"phrase\". The Japanese sentence is: \(text)"
+                } else {
+                    prompt = "I will give you a Japanese sentence, and you have do the following: \(instructions). Answer in JSON format with the answer in the field \"phrase\". The Japanese sentence is: \(text)"
+                }
+            } else {
+                if cleanString(text).isEmpty {
+                    return
+                }
+                prompt = "I will give you a Japanese sentence. Give me a modified version of this sentence, changing some parts of it, for example words, verb, tense, etc. Answer in JSON format with field \"phrase\". The Japanese sentence is: \(text)"
             }
+            
             let gptAlterAnswer = try await OpenAIService().send(
                 prompt: prompt,
                 temperature: temperature,

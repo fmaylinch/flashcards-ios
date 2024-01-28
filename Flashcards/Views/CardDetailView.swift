@@ -101,7 +101,7 @@ struct MainTextView: View {
                                     .foregroundColor(.cyan)
                             }
                         } else {
-                            // Japanese punctuation characters don't have the usual trailing padding when they're the last character
+                            // Japanese punctuation last characters don't have the usual trailing padding
                             let endsInPunctuation = ["、", "。"].contains(term.word.last)
                             Text(term.word)
                                 .font(.system(size: fontSize, weight: .regular))
