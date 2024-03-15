@@ -130,7 +130,7 @@ struct CardEditView: View {
                     instructions = instructions.dropFirst(4)
                 }
                 if text.isEmpty {
-                    prompt = "In Japanese, \(instructions). Answer in JSON format with the answer in the field \"phrase\". The Japanese sentence is: \(text)"
+                    prompt = "Tell me this: \(instructions). Write the answer in Japanese, in JSON format with the Japanese text in the field \"phrase\""
                 } else {
                     prompt = "I will give you a Japanese sentence, and you have do the following: \(instructions). Answer in JSON format with the answer in the field \"phrase\". The Japanese sentence is: \(text)"
                 }
