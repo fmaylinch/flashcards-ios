@@ -3,12 +3,23 @@ import SwiftUI
 
 #Preview {
     ContentView().preferredColorScheme(.dark)
-    //TestView().preferredColorScheme(.dark)
 }
 
-struct TestView: View {
+struct CardTestView: View {
     var body: some View {
-        Text("Hello")
+        CardDetailView(
+            card: Card(
+                id: "",
+                front: "春、夏、秋、冬",
+                back: "spring, summer, autumn, winter",
+                mainWords: [],
+                notes: "test card",
+                tags: ["weather", "time"],
+                files: [],
+                searchText: "")
+        ) { (card, action) in
+            
+        }
     }
 }
 
