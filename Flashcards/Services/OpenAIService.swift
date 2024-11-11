@@ -17,6 +17,9 @@ class OpenAIService {
         
         // According to OpenAI docs, when requesting "json_object" format,
         //   you must also instruct the model to produce JSON yourself via a message.
+        //
+        // TODO: Try gpt4 omni and structured outputs:
+        // https://openai.com/index/introducing-structured-outputs-in-the-api/
         let userMessage = GPTMessage(role: "user", content: prompt)
         let payload = GPTChatPayload(
             model: "gpt-4", // gpt-4-turbo-preview (turbo works worse, it seems)
@@ -28,7 +31,7 @@ class OpenAIService {
         
         print("Making call to OpenAI with payload: \(payload)")
         let (data, _) = try await URLSession.shared.data(for: request)
-        print("Response received from GTP: \(String(data: data, encoding: .utf8))")
+        print("Response received from GTP: \(String(describing: String(data: data, encoding: .utf8)))")
         let chatResponse = try JSONDecoder().decode(GPTChatResponse.self, from: data)
         return chatResponse.choices[0].message.content
     }
