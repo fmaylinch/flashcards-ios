@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -41,10 +41,6 @@
 		53FF07E32B4C25F0005CB29C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		53E9BBBA2CB28F5200A5F4B8 /* Kotlin */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Kotlin; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
-
 /* Begin PBXFrameworksBuildPhase section */
 		53BC44FF2B4B359F00BD4710 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -76,7 +72,6 @@
 		53BC45042B4B359F00BD4710 /* Flashcards */ = {
 			isa = PBXGroup;
 			children = (
-				53E9BBBA2CB28F5200A5F4B8 /* Kotlin */,
 				53DBDE4E2B5C0A550005D8C5 /* Models */,
 				53DBDE4D2B5C0A370005D8C5 /* Views */,
 				53DBDE4C2B5C0A240005D8C5 /* Services */,
@@ -141,9 +136,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				53E9BBBA2CB28F5200A5F4B8 /* Kotlin */,
 			);
 			name = Flashcards;
 			productName = Flashcards;
