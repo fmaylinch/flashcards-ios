@@ -4,11 +4,6 @@ class CardsService {
     
     static let shared = CardsService()
     
-    func playAudio(file: String) {
-        let url = "\(Constants.baseUrl)/audio/\(Constants.username)/\(file)" // TODO: configure
-        AudioPlayerManager.shared.playSound(from: url)
-    }
-    
     func generateAndPlayAudio(text: String) async throws {
         let cardToListen = try await CardsService.shared.call(
             method: "POST",
@@ -27,6 +22,13 @@ class CardsService {
             returnType: CardToListenResponse.self)
         let file = cardToListen.files[0]
         CardsService.shared.playAudio(file: file)
+    }
+    
+    // This function should not be used directly from outside,
+    // because the file to listen to is prepared via other methods.
+    private func playAudio(file: String) {
+        let url = "\(Constants.baseUrl)/audio/\(Constants.username)/\(file)"
+        AudioPlayerManager.shared.playSound(from: url)
     }
     
     func getCards() async throws -> [Card] {

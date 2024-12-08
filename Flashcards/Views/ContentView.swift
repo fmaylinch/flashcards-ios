@@ -260,7 +260,12 @@ struct CardItemView: View {
                         .padding(.vertical, 5)
                         .foregroundColor(.cyan)
                         .onTapGesture {
-                            CardsService.shared.playAudio(file: card.files.randomElement()!)
+                            Task {
+                                try await CardsService.shared.playCardFile(
+                                    card: card,
+                                    fileIndex: card.files.indices.randomElement()!
+                                )
+                            }
                         }
                 }
             })
