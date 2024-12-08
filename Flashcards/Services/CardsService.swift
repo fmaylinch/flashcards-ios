@@ -5,7 +5,7 @@ class CardsService {
     static let shared = CardsService()
     
     func playAudio(file: String) {
-        let url = "\(Constants.baseUrl)/audio/\(file)"
+        let url = "\(Constants.baseUrl)/audio/\(Constants.username)/\(file)" // TODO: configure
         AudioPlayerManager.shared.playSound(from: url)
     }
     
@@ -13,7 +13,17 @@ class CardsService {
         let cardToListen = try await CardsService.shared.call(
             method: "POST",
             path: "cards/tts",
-            data: CardToListen(front: text),
+            data: TextToListen(front: text),
+            returnType: CardToListenResponse.self)
+        let file = cardToListen.files[0]
+        CardsService.shared.playAudio(file: file)
+    }
+    
+    func playCardFile(card: Card, fileIndex: Int) async throws {
+        let cardToListen = try await CardsService.shared.call(
+            method: "POST",
+            path: "cards/audio/\(fileIndex)",
+            data: CardToListen(_id: card.id),
             returnType: CardToListenResponse.self)
         let file = cardToListen.files[0]
         CardsService.shared.playAudio(file: file)
@@ -137,8 +147,12 @@ struct CardUpdate: Encodable {
     // TODO: check that files and tts is not updated in the DB
 }
 
-struct CardToListen: Encodable {
+struct TextToListen: Encodable {
     let front: String
+}
+
+struct CardToListen: Encodable {
+    let _id: String
 }
 
 struct CardToListenResponse: Decodable {

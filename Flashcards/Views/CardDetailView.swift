@@ -33,7 +33,7 @@ struct CardDetailView: View {
         .padding(20)
         
         HStack(spacing: 0) {
-            ForEach(card.files, id: \.self) { file in
+            ForEach(card.files.indices, id: \.self) { index in
                 Image(systemName: "speaker.wave.2")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -42,8 +42,10 @@ struct CardDetailView: View {
                     .padding(.vertical, 5)
                     .foregroundColor(.cyan)
                     .onTapGesture {
-                        let url = "\(Constants.baseUrl)/audio/\(file)"
-                        AudioPlayerManager.shared.playSound(from: url)
+                        print("Playing file \(index) of card \(card.front), which is file \(card.files[index])")
+                        Task {
+                            try await CardsService.shared.playCardFile(card: card, fileIndex: index)
+                        }
                     }
             }
         }
