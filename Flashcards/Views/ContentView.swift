@@ -2,7 +2,7 @@ import SwiftUI
 
 
 #Preview {
-    ContentView().preferredColorScheme(.dark)
+    ListView().preferredColorScheme(.dark)
 }
 
 struct CardTestView: View {
@@ -235,41 +235,39 @@ struct CardItemView: View {
     @ObservedObject var showOptions: ShowOptions
 
     var body: some View {
-        NavigationLink(value: card) {
-            VStack(alignment: .leading, content: {
-                if showOptions.showJapanese {
-                    Text(card.front)
-                        .font(.system(size: 28, weight: .regular))
-                }
-                if showOptions.showEnglish {
-                    let color: Color = showOptions.showJapanese ? .orange.opacity(0.9) : .primary
-                    Text(card.back)
-                        .font(.system(size: 22, weight: .regular))
-                        .foregroundColor(color)
-                }
-                if showOptions.showTags {
-                    Text(card.tags.joined(separator: " "))
-                        .font(.system(size: 20, weight: .regular))
-                        .foregroundColor(.purple.opacity(0.5))
-                }
-                if showOptions.showPlayButton && !card.files.isEmpty {
-                    Image(systemName: "speaker.wave.2")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 30, height: 30)
-                        .padding(.vertical, 5)
-                        .foregroundColor(.cyan)
-                        .onTapGesture {
-                            Task {
-                                try await CardsService.shared.playCardFile(
-                                    card: card,
-                                    fileIndex: card.files.indices.randomElement()!
-                                )
-                            }
+        VStack(alignment: .leading, content: {
+            if showOptions.showJapanese {
+                Text(card.front)
+                    .font(.system(size: 28, weight: .regular))
+            }
+            if showOptions.showEnglish {
+                let color: Color = showOptions.showJapanese ? .orange.opacity(0.9) : .primary
+                Text(card.back)
+                    .font(.system(size: 22, weight: .regular))
+                    .foregroundColor(color)
+            }
+            if showOptions.showTags {
+                Text(card.tags.joined(separator: " "))
+                    .font(.system(size: 20, weight: .regular))
+                    .foregroundColor(.purple.opacity(0.5))
+            }
+            if showOptions.showPlayButton && !card.files.isEmpty {
+                Image(systemName: "speaker.wave.2")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 30, height: 30)
+                    .padding(.vertical, 5)
+                    .foregroundColor(.cyan)
+                    .onTapGesture {
+                        Task {
+                            try await CardsService.shared.playCardFile(
+                                card: card,
+                                fileIndex: card.files.indices.randomElement()!
+                            )
                         }
-                }
-            })
-        }
+                    }
+            }
+        })
     }
 }
 

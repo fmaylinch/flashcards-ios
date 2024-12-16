@@ -2,6 +2,8 @@ import SwiftUI
 
 struct CardEditView: View {
     
+    // Instead of binding isPresented, you can also do this and call dismiss()
+    // @Environment(\.dismiss) var dismiss
     @Binding var isPresented: Bool
 
     var id: String = ""
