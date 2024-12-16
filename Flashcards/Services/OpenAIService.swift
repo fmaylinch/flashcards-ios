@@ -2,7 +2,7 @@ import Foundation
 
 class OpenAIService {
     
-    static let shared = OpenAIService()
+    @MainActor static let shared = OpenAIService()
     
     func send(prompt: String, temperature: Double? = nil) async throws -> String {
         

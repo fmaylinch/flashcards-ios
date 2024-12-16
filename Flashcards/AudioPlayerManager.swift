@@ -9,7 +9,7 @@ import Foundation
 import AVFoundation
 
 class AudioPlayerManager {
-    static let shared = AudioPlayerManager()
+    @MainActor static let shared = AudioPlayerManager()
     private var audioPlayer: AVPlayer?
     
     func playSound(from url: String) {

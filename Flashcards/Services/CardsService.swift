@@ -1,8 +1,8 @@
 import Foundation
 
-class CardsService {
+final class CardsService : Sendable {
     
-    static let shared = CardsService()
+    @MainActor static let shared = CardsService()
     
     func generateAndPlayAudio(text: String) async throws {
         let cardToListen = try await CardsService.shared.call(
@@ -11,7 +11,7 @@ class CardsService {
             data: TextToListen(front: text),
             returnType: CardToListenResponse.self)
         let file = cardToListen.files[0]
-        CardsService.shared.playAudio(file: file)
+        await CardsService.shared.playAudio(file: file)
     }
     
     func playCardFile(card: Card, fileIndex: Int) async throws {
@@ -21,12 +21,12 @@ class CardsService {
             data: CardToListen(_id: card.id),
             returnType: CardToListenResponse.self)
         let file = cardToListen.files[0]
-        CardsService.shared.playAudio(file: file)
+        await CardsService.shared.playAudio(file: file)
     }
     
     // This function should not be used directly from outside,
     // because the file to listen to is prepared via other methods.
-    private func playAudio(file: String) {
+    @MainActor private func playAudio(file: String) {
         let url = "\(Constants.baseUrl)/audio/\(Constants.username)/\(file)"
         AudioPlayerManager.shared.playSound(from: url)
     }
