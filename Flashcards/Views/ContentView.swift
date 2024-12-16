@@ -61,12 +61,22 @@ struct OptionsView: View {
 struct ListView: View {
     
     @State private var search = ""
-    @State private var filteredCards: [Card] = []
     @StateObject private var cardsModel = CardsModel()
     @State private var cardsLoaded = false
     @StateObject private var showOptions = ShowOptions()
     @State private var isEditCardPresented = false
-    
+
+    private var filteredCards: [Card] {
+        if search.isEmpty {
+            return cardsModel.cards
+        } else {
+            return cardsModel.cards.filter { card in
+                card.searchText.localizedCaseInsensitiveContains(search)
+            }
+        }
+
+    }
+
     var body: some View {
         VStack {
             ModeButtons(showOptions: showOptions)
@@ -85,7 +95,6 @@ struct ListView: View {
                     CardDetailView(card: card) { (card, action) in
                         DispatchQueue.main.async { // TODO: where to put these main.async ?
                             cardsModel.updateCard(card, updateAction: action)
-                            filterCards()
                         }
                     }
 
@@ -94,7 +103,7 @@ struct ListView: View {
                 }
             }
             .searchable(text: $search)
-            .onChange(of: search, initial: false, filterCards)
+            .animation(.default, value: search)
             .task {
                 await loadCards(forceReload: false)
             }
@@ -102,7 +111,6 @@ struct ListView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         cardsModel.cards.shuffle()
-                        filterCards()
                     } label: {
                         ToolbarIcon(systemName: "shuffle")
                     }
@@ -132,39 +140,26 @@ struct ListView: View {
                 CardEditView(isPresented: $isEditCardPresented) { (card, action) in
                     DispatchQueue.main.async {
                         cardsModel.updateCard(card, updateAction: action)
-                        filterCards()
                     }
                 }
             }
         }
     }
     
+    // TODO: move this method to a better place, e.g. cardsModel 
     private func loadCards(forceReload: Bool) async {
         if cardsLoaded && !forceReload {
             return
         }
-        filteredCards = []
         do {
             cardsLoaded = false
             let cards = try await CardsService.shared.getCards()
             DispatchQueue.main.async {
                 self.cardsModel.cards = cards.reversed()
                 cardsLoaded = true
-                filterCards()
             }
         } catch {
-            filteredCards = [errorCard(error: error)]
-        }
-    }
-    
-    private func filterCards() {
-        if search.isEmpty {
-            filteredCards = cardsModel.cards
-        } else {
-            let searchLower = search.lowercased()
-            filteredCards = cardsModel.cards.filter { card in
-                card.searchText.contains(searchLower)
-            }
+            self.cardsModel.cards = [errorCard(error: error)]
         }
     }
 }
