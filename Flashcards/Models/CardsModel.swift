@@ -57,8 +57,12 @@ func errorCard(text: String) -> Card {
 }
 
 func messageCard(front: String, back: String = "") -> Card {
+    return dummyCard(id: "", front: front, back: back)
+}
+
+func dummyCard(id: String, front: String, back: String) -> Card {
     return Card(
-        id: "",
+        id: id,
         front: front,
         back: back,
         mainWords: [],

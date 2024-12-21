@@ -38,7 +38,13 @@ final class CardsService : Sendable {
             returnType: CardsResponse.self)
         return cardsResponse.cards.map(toModel)
     }
-    
+
+    func getDummyCards() async throws -> [Card] {
+        return (1...5).map { i in
+            dummyCard(id: String(i), front: "sample \(i)", back: "text \(i)")
+        }
+    }
+
     func create(card: Card) async throws -> Card {
         let cardCreated = try await CardsService.shared.call(
             method: "POST",

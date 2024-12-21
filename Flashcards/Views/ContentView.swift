@@ -153,7 +153,7 @@ struct ListView: View {
         }
         do {
             cardsLoaded = false
-            let cards = try await CardsService.shared.getCards()
+            let cards = try await CardsService.shared.getCards() // getDummyCards()
             DispatchQueue.main.async {
                 self.cardsModel.cards = cards.reversed()
                 cardsLoaded = true
