@@ -189,3 +189,27 @@ func split(terms: [Term], maxChars: Int) -> [[Term]] {
     //print("resultList: \(resultList)")
     return resultList
 }
+
+
+
+#Preview {
+    CardTestView()
+}
+
+struct CardTestView: View {
+    var body: some View {
+        CardDetailView(
+            card: Card(
+                id: "",
+                front: "春、夏、秋、冬",
+                back: "spring, summer, autumn, winter",
+                mainWords: [],
+                notes: "test card",
+                tags: ["weather", "time"],
+                files: [],
+                searchText: "")
+        ) { (card, action) in
+            
+        }
+    }
+}
