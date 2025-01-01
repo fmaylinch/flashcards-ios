@@ -1,11 +1,12 @@
 import SwiftUI
+import Observation
 
 struct CardListView: View {
     
     @State private var search = ""
-    @StateObject private var cardsModel = CardsModel()
+    private var cardsModel = CardsModel()
     @State private var cardsLoaded = false
-    @StateObject private var showOptions = ShowOptions()
+    private var showOptions = ShowOptions()
     @State private var isEditCardPresented = false
 
     private var filteredCards: [Card] {
@@ -106,18 +107,18 @@ struct CardListView: View {
     }
 }
 
-
-class ShowOptions : ObservableObject {
-    @Published var showJapanese = true
-    @Published var showEnglish = true
-    @Published var showTags = true
-    @Published var showPlayButton = true
+@Observable
+class ShowOptions {
+    var showJapanese = true
+    var showEnglish = true
+    var showTags = true
+    var showPlayButton = true
 }
 
 
 struct ModeButtons: View {
     
-    @ObservedObject var showOptions: ShowOptions
+    @Bindable var showOptions: ShowOptions
     
     var body: some View {
         HStack {
@@ -169,7 +170,7 @@ struct ToggleIconButton: View {
 struct CardItemView: View {
     
     var card: Card
-    @ObservedObject var showOptions: ShowOptions
+    var showOptions: ShowOptions
 
     var body: some View {
         VStack(alignment: .leading, content: {

@@ -1,9 +1,11 @@
 import Foundation
+import Observation
 
 @MainActor
-class CardsModel: ObservableObject {
+@Observable
+class CardsModel {
     
-    @Published var cards: [Card] = []
+    var cards: [Card] = []
     
     // Updates the list of cards locally, so we don't have to call CardsService.getCards() all the time
     // TODO: move this logic as a cache in CardsService, or as a CachedCardsService proxy
