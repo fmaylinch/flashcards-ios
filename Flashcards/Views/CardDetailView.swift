@@ -145,11 +145,11 @@ func split(text: String, mainTerms: [Term]) -> [Term] {
     var result: [Term] = []
 
     for term in mainTerms {
-        if let separatorRange = text.range(of: term.word) {
+        if let separatorRange = text.range(of: term.word, range: currentIndex ..< text.endIndex) {
             if (separatorRange.lowerBound < currentIndex) {
                 continue // order of terms is probably wrong
             }
-            let piece = String(text[currentIndex..<separatorRange.lowerBound])
+            let piece = String(text[currentIndex ..< separatorRange.lowerBound])
             if !piece.isEmpty {
                 result.append(Term(word: piece, link: nil)) // text before the term found
             }
@@ -157,7 +157,7 @@ func split(text: String, mainTerms: [Term]) -> [Term] {
             currentIndex = separatorRange.upperBound
         }
     }
-    let remainingText = text[currentIndex..<text.endIndex]
+    let remainingText = text[currentIndex ..< text.endIndex]
     if !remainingText.isEmpty {
         result.append(Term(word: String(remainingText), link: nil))
     }
