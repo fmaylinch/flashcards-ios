@@ -77,6 +77,7 @@ struct CardDetailView: View {
 
 struct Term: Hashable {
     let word: String
+    let color: Color
     let link: String? // if missing, we don't want to link this word
 }
 
@@ -100,7 +101,7 @@ struct MainTextView: View {
                             Link(destination: URL(string: "https://nihongo-app.com/dictionary/word/\(link)")!) {
                                 Text(term.word)
                                     .font(.system(size: fontSize, weight: .regular))
-                                    .foregroundColor(.cyan)
+                                    .foregroundColor(term.color)
                             }
                         } else {
                             // Japanese punctuation last characters don't have the usual trailing padding
@@ -115,7 +116,7 @@ struct MainTextView: View {
         }
     }
     
-    func calculateWordsAndLinks() -> [String] {
+    private func calculateWordsAndLinks() -> [String] {
         if !mainWords.isEmpty {
             return mainWords
         }
@@ -127,12 +128,16 @@ struct MainTextView: View {
 // Some words indicate the desired link, like this: "word:link".
 // For example, from ["A", "B:linkB", "C:linkC"] returns [ ["A", "B", "C"], ["A", "linkB", "linkC"] ]
 func mapToTerms(wordAndLinks: [String]) -> [Term] {
+    let colors: [Color] = [.cyan, .cyan.mix(with: .black, by: 0.2)] // to distinguish adjacent words
+    var colorIndex = 0
     let result = wordAndLinks.map { wordAndLink in
         let components = wordAndLink.split(separator: ":").map { String($0) }
+        let color = colors[colorIndex]
+        colorIndex = (colorIndex + 1) % colors.count
         if components.count > 1 {
-            return Term(word: components[0], link: components[1])
+            return Term(word: components[0], color: color, link: components[1])
         } else {
-            return Term(word: wordAndLink, link: wordAndLink)
+            return Term(word: wordAndLink, color: color, link: wordAndLink)
         }
     }
     //print("mainTerms: \(result)")
@@ -151,7 +156,7 @@ func split(text: String, mainTerms: [Term]) -> [Term] {
             }
             let piece = String(text[currentIndex ..< separatorRange.lowerBound])
             if !piece.isEmpty {
-                result.append(Term(word: piece, link: nil)) // text before the term found
+                result.append(Term(word: piece, color: .white, link: nil)) // text before the term found
             }
             result.append(term)
             currentIndex = separatorRange.upperBound
@@ -159,7 +164,7 @@ func split(text: String, mainTerms: [Term]) -> [Term] {
     }
     let remainingText = text[currentIndex ..< text.endIndex]
     if !remainingText.isEmpty {
-        result.append(Term(word: String(remainingText), link: nil))
+        result.append(Term(word: String(remainingText), color: .white, link: nil))
     }
     //print("Split terms: \(result)")
     return result
