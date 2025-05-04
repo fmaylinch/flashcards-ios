@@ -76,11 +76,16 @@ struct CardListView: View {
                 }
             }
             .sheet(isPresented: $isEditCardPresented) {
+                let lastTags = filteredCards.first?.tags.joined(separator: " ") ?? ""
+
                 // TODO: when coming from this sheet, the List is not updated
                 //   because the .task is not called.
                 // When coming from CardDetailView (after editing the card),
                 //   the list is updated because .task is called.
-                CardEditView(isPresented: $isEditCardPresented) { (card, action) in
+                CardEditView(
+                    isPresented: $isEditCardPresented,
+                    tags: lastTags
+                ) { (card, action) in
                     DispatchQueue.main.async {
                         cardsModel.updateCard(card, updateAction: action)
                     }
