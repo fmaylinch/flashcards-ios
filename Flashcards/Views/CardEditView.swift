@@ -46,6 +46,9 @@ struct CardEditView: View {
                         await alterSentence(text: front)
                     }
                 }
+                ActionButton(imageName: "line.3.horizontal", isCallingApi: isCallingAlter) {
+                    front = front.removeNewLines()
+                }            
             }
             .padding(.vertical, 5)
 
@@ -92,7 +95,7 @@ struct CardEditView: View {
     }
     
     func playAudio(text: String) async {
-        if cleanString(text).isEmpty {
+        if text.trim().isEmpty {
             return
         }
         isCallingPlay = true
@@ -103,7 +106,7 @@ struct CardEditView: View {
     }
     
     func analyze(text: String) async {
-        if cleanString(text).isEmpty {
+        if text.trim().isEmpty {
             return
         }
         isCallingAnalyze = true
@@ -137,7 +140,7 @@ struct CardEditView: View {
                     prompt = "I will give you a Japanese sentence, and you have do the following: \(instructions). Answer in JSON format with the answer in the field \"phrase\". The Japanese sentence is: \(text)"
                 }
             } else {
-                if cleanString(text).isEmpty {
+                if text.trim().isEmpty {
                     return
                 }
                 prompt = "I will give you a Japanese sentence. Give me a modified version of this sentence, changing some parts of it, for example words, verb, tense, etc. Answer in JSON format with field \"phrase\". The Japanese sentence is: \(text)"
@@ -165,11 +168,11 @@ struct CardEditView: View {
         await tryOrAlert {
             let card = Card(
                 id: id,
-                front: cleanString(front),
-                back: cleanString(back),
-                mainWords: cleanString(mainWords).split(usingRegex: "[ 、,]+"),
-                notes: cleanString(notes),
-                tags: cleanString(tags).split(usingRegex: "[ ,]+"),
+                front: front.trim(),
+                back: back.trim(),
+                mainWords: mainWords.trim().split(usingRegex: "[ 、,]+"),
+                notes: notes.trim(),
+                tags: tags.trim().split(usingRegex: "[ ,]+"),
                 files: [], // not used
                 searchText: "" // not used
             )
@@ -192,10 +195,6 @@ struct CardEditView: View {
             isAlertPresented = true
         }
     }
-}
-
-func cleanString(_ str: String) -> String {
-    return str.trimmingCharacters(in: .whitespacesAndNewlines)
 }
 
 struct ActionButton: View {

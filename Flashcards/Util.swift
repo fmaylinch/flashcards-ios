@@ -39,6 +39,14 @@ extension String {
         
         return result
     }
+
+    func trim() -> String {
+        return self.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    func removeNewLines() -> String {
+        return self.replacingOccurrences(of: "\n", with: "")
+    }
 }
 
 enum ApiError: Error {
