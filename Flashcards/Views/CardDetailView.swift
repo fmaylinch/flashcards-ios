@@ -48,6 +48,17 @@ struct CardDetailView: View {
                         }
                     }
             }
+            Image(systemName: "speaker.wave.2.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 30, height: 30)
+                .padding(.horizontal, 15)
+                .padding(.vertical, 5)
+                .foregroundColor(.cyan)
+                .onTapGesture {
+                    print("Playing card \(card.front), with shortcut to use Siri voice")
+                    playCardWithSiri(card: card)
+                }
         }
         
         Spacer()
@@ -195,6 +206,23 @@ func split(terms: [Term], maxChars: Int) -> [[Term]] {
     return resultList
 }
 
+@MainActor func playCardWithSiri(card: Card) {
+    guard
+        // This is the name of a Shortcut I have
+        let shortcut = "Text to JP audio".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+        let text = card.front.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+    else {
+        print("Encoding of shortcut or text failed")
+        return
+    }
+    let urlString = "shortcuts://run-shortcut?name=\(shortcut)&input=text&text=\(text)"
+    print("Opening shortcut with URL: \(urlString)")
+    guard let url = URL(string: urlString) else {
+        print("Malformed URL: \(urlString)")
+        return
+    }
+    UIApplication.shared.open(url)
+}
 
 
 #Preview {
