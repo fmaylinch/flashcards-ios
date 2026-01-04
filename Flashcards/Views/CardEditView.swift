@@ -126,6 +126,9 @@ struct CardEditView: View {
             var temperature: Double? = nil
             
             // Option for custom instructions
+            let answerInstructions = "Answer in JSON format with the answer in the field \"phrase\"."
+            let introWithSentence = "I have the following Japanese sentence: \(text)"
+
             let gptPrefix = "gpt "
             if notes.hasPrefix(gptPrefix) {
                 var instructions = notes.dropFirst(gptPrefix.count)
@@ -135,15 +138,15 @@ struct CardEditView: View {
                     instructions = instructions.dropFirst(4)
                 }
                 if text.isEmpty {
-                    prompt = "Tell me this: \(instructions). Write the answer in Japanese, in JSON format with the Japanese text in the field \"phrase\""
+                    prompt = "Tell me a Japanese sentence \(instructions). \(answerInstructions)"
                 } else {
-                    prompt = "I will give you a Japanese sentence, and you have do the following: \(instructions). Answer in JSON format with the answer in the field \"phrase\". The Japanese sentence is: \(text)"
+                    prompt = "\(introWithSentence)\n\(instructions). \(answerInstructions)"
                 }
             } else {
                 if text.trim().isEmpty {
                     return
                 }
-                prompt = "I will give you a Japanese sentence. Give me a modified version of this sentence, changing some parts of it, for example words, verb, tense, etc. Answer in JSON format with field \"phrase\". The Japanese sentence is: \(text)"
+                prompt = "\(introWithSentence)\nGive me a modified version of this sentence, changing some parts of it, for example words, verb, tense, etc. \(answerInstructions)"
             }
             
             let gptAlterAnswer = try await OpenAIService().send(

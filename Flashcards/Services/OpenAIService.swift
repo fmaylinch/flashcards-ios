@@ -22,7 +22,7 @@ class OpenAIService {
         // https://openai.com/index/introducing-structured-outputs-in-the-api/
         let userMessage = GPTMessage(role: "user", content: prompt)
         let payload = GPTChatPayload(
-            model: "gpt-4", // gpt-4-turbo-preview (turbo works worse, it seems)
+            model: "gpt-5-mini", 
             messages: [userMessage],
             response_format: nil, // GPTResponseFormat(type: "json_object")
             temperature: temperature,
