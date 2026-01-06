@@ -31,7 +31,7 @@ class OpenAIService {
         
         print("Making call to OpenAI with payload: \(payload)")
         let (data, _) = try await URLSession.shared.data(for: request)
-        print("Response received from GTP: \(String(describing: String(data: data, encoding: .utf8)))")
+        print("Response received from GPT: \(String(describing: String(data: data, encoding: .utf8)))")
         let chatResponse = try JSONDecoder().decode(GPTChatResponse.self, from: data)
         return chatResponse.choices[0].message.content
     }

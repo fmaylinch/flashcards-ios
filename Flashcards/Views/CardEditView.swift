@@ -109,9 +109,10 @@ struct CardEditView: View {
         if text.trim().isEmpty {
             return
         }
+        let introWithSentence = "I have the following Japanese phrase: \(text)"
         isCallingAnalyze = true
         await tryOrAlert {
-            let prompt = "From a Japanese sentence, I want the English translation and the main words in Japanese.\nThe answer must be in JSON format, with fields \"translation\" and \"mainWords\".\nFor the 'mainWords', only include the most important words of the sentence, do not include particles, markers, or words that appear frequently in Japanese sentences. \nHere's the Japanese sentence: \(text)"
+            let prompt = "\(introWithSentence)\n\nI want the English translation and the main words in Japanese.\nThe answer must be in JSON format, with fields \"translation\" and \"mainWords\".\nFor \"mainWords\", only include the most important words of the sentence, do not include particles, markers, or words that appear frequently in Japanese sentences. Also, for verbs, include the base form of the verb in this format: <verb>:<base form>."
             let gptAnalyzeAnswer = try await OpenAIService().send(prompt: prompt, answerType: GptAnalyzeAnswer.self)
             back = gptAnalyzeAnswer.translation
             mainWords = gptAnalyzeAnswer.mainWords.joined(separator: "、")
@@ -126,8 +127,8 @@ struct CardEditView: View {
             var temperature: Double? = nil
             
             // Option for custom instructions
+            let introWithSentence = "I have the following Japanese phrase: \(text)"
             let answerInstructions = "Answer in JSON format with the answer in the field \"phrase\"."
-            let introWithSentence = "I have the following Japanese sentence: \(text)"
 
             let gptPrefix = "gpt "
             if notes.hasPrefix(gptPrefix) {
@@ -138,7 +139,7 @@ struct CardEditView: View {
                     instructions = instructions.dropFirst(4)
                 }
                 if text.isEmpty {
-                    prompt = "Tell me a Japanese sentence \(instructions). \(answerInstructions)"
+                    prompt = "Tell me a Japanese phrase \(instructions). \(answerInstructions)"
                 } else {
                     prompt = "\(introWithSentence)\n\(instructions). \(answerInstructions)"
                 }
@@ -146,7 +147,7 @@ struct CardEditView: View {
                 if text.trim().isEmpty {
                     return
                 }
-                prompt = "\(introWithSentence)\nGive me a modified version of this sentence, changing some parts of it, for example words, verb, tense, etc. \(answerInstructions)"
+                prompt = "\(introWithSentence)\nGive me a modified version of this phrase, changing some parts of it, for example words, verb, tense, etc. \(answerInstructions)"
             }
             
             let gptAlterAnswer = try await OpenAIService().send(
